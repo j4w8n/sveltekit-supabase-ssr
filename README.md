@@ -42,6 +42,8 @@ npm install @supabase/supabase-js @supasbase/ssr
     PUBLIC_SUPABASE_URL=https://<your-project-id>.supabase.co
     ```
 
+3. Change email templates, per [official docs](https://supabase.com/docs/guides/auth/server-side/email-based-auth-with-pkce-flow-for-ssr?framework=sveltekit#update-email-templates-with-url-for-api-endpoint)
+
 ## Run!
 
 ```
