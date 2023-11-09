@@ -22,7 +22,7 @@ npm create svelte@latest sveltekit-supabase-ssr
 cd sveltekit-supabase-ssr
 npm install
 
-npm install @supabase/supabase-js @supasbase/ssr
+npm install @supabase/supabase-js @supabase/ssr
 ```
 
 ## Setup
