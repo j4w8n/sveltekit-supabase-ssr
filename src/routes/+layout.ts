@@ -4,7 +4,7 @@ import type { Database } from '$lib/database'
 
 export const load = async ({ fetch, data, depends }) => {
   depends('supabase:auth')
-  console.log('layout.ts data session', isBrowser(), data.session)
+
   const supabase = createBrowserClient<Database>(
     PUBLIC_SUPABASE_URL,
     PUBLIC_SUPABASE_ANON_KEY,
@@ -17,7 +17,6 @@ export const load = async ({ fetch, data, depends }) => {
           }
   
           const cookie = parse(document.cookie)
-          console.log('cookie', isBrowser(), cookie)
           return cookie[key]
         }
       }
@@ -27,7 +26,6 @@ export const load = async ({ fetch, data, depends }) => {
   const {
     data: { session }
   } = await supabase.auth.getSession()
-  console.log('layout.ts session', isBrowser(), session)
 
   return { supabase, session }
 }
