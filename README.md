@@ -30,7 +30,7 @@ npm install @supabase/supabase-js @supasbase/ssr
 1. Supabase types
     ```
     supabase init
-    supabase link --project-ref your-project-id
+    supabase link --project-ref <your-project-id>
     supabase gen types typescript --linked > src/lib/database.d.ts
     ```
 
