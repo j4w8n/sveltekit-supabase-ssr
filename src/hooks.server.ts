@@ -11,9 +11,6 @@ export const handle: Handle = async ({ event, resolve }) => {
     PUBLIC_SUPABASE_URL,
     PUBLIC_SUPABASE_ANON_KEY,
     {
-      cookieOptions: {
-        httpOnly: false
-      },
       cookies: {
         get: (key) => event.cookies.get(key),
         set: (key, value, options) => {
