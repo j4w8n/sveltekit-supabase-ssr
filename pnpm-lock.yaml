@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@supabase/ssr':
-    specifier: ^0.0.9
-    version: 0.0.9(@supabase/supabase-js@2.38.4)
+    specifier: ^0.0.10
+    version: 0.0.10(@supabase/supabase-js@2.38.4)
   '@supabase/supabase-js':
     specifier: ^2.38.4
     version: 2.38.4
@@ -339,8 +339,8 @@ packages:
       - supports-color
     dev: false
 
-  /@supabase/ssr@0.0.9(@supabase/supabase-js@2.38.4):
-    resolution: {integrity: sha512-ywCC5nOrv4HYjUhnYOGE8wMkG/6vsyb1YlP3SNbeJxxniYNLSvBcbTAM7sNLMnhlDrACLBXDgukrabCI8tnNMw==}
+  /@supabase/ssr@0.0.10(@supabase/supabase-js@2.38.4):
+    resolution: {integrity: sha512-eVs7+bNlff8Fd79x8K3Jbfpmf8P8QRA1Z6rUDN+fi4ReWvRBZyWOFfR6eqlsX6vTjvGgTiEqujFSkv2PYW5kbQ==}
     peerDependencies:
       '@supabase/supabase-js': ^2.33.1
     dependencies:

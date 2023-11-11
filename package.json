@@ -20,7 +20,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@supabase/ssr": "^0.0.9",
+		"@supabase/ssr": "^0.0.10",
 		"@supabase/supabase-js": "^2.38.4"
 	}
 }
