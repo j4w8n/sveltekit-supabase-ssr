@@ -3,10 +3,6 @@ import { createServerClient } from '@supabase/ssr'
 import type { Handle } from '@sveltejs/kit'
 
 export const handle: Handle = async ({ event, resolve }) => {
-  /**
-   * cookieOptions is needed for now,
-   * to work around a possible bug introduced in supabase/ssr v0.0.7
-   */
   event.locals.supabase = createServerClient(
     PUBLIC_SUPABASE_URL,
     PUBLIC_SUPABASE_ANON_KEY,
