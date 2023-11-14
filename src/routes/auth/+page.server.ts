@@ -43,14 +43,14 @@ export const actions = {
         if (error instanceof AuthApiError && error.status === 400) {
           return fail(400, {
             error: 'Invalid credentials.',
-            values: {
+            data: {
               email
             }
           })
         }
         return fail(500, {
           error: 'Server error. Try again later.',
-          values: {
+          data: {
             email
           }
         })
@@ -80,7 +80,7 @@ export const actions = {
     } else {
       return fail(400, {
         error: 'Please enter an email and password',
-        values: {
+        data: {
           email
         }
       });
