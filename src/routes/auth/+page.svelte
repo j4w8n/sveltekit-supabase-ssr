@@ -13,5 +13,5 @@
   <button formaction="?/signup" style="margin-top: 12px;">Signup</button>
 </form>
 <form method="POST" action="?/signin">
-  <button style="margin-top: 12px;" name="provider" value="github">Login with GitHub ServerSide</button>
+  <button style="margin-top: 12px;" name="provider" value="github">Login with GitHub</button>
 </form>
