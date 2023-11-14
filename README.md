@@ -4,10 +4,11 @@ SvelteKit, Supabase, and lovely SSR Auth
 
 ## Code Showcase
 
-- Email sign-up.
-- Email/password login.
-- Server-side GitHub login. Can easily be changed to other oauth providers.
+- Email sign-up/sign-in.
+- GitHub sign-in. Can easily be changed to other oauth providers.
 - Requires a session to access all pages under the `authenticated` layout group.
+
+> All sign-up and sign-ins happen server-side.
 
 ## Install
 
