@@ -57,13 +57,14 @@ export const actions = {
       }
 
       /* Login successful, redirect. */
-      throw redirect(303, '/app');
+      throw redirect(303, '/app')
+      
     } else if (provider) {
       /* OAuth sign-in. */
 
       /**
-       * Sign-in will not happen yet, because we're on the server-side; 
-       * but we need the returned url (with redirect options included)
+       * Sign-in will not happen yet, because we're on the server-side, 
+       * but we need the returned url.
        */
       const { data, error } = await supabase.auth.signInWithOAuth({ 
         provider,
@@ -74,7 +75,7 @@ export const actions = {
 
       if (error) throw error
 
-      /* Now prompt user and authorize sign-in in browser. */
+      /* Now authorize sign-in on browser. */
       if (data.url) throw redirect(303, data.url)
 
     } else {
