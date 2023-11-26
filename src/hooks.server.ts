@@ -17,7 +17,7 @@ export const handle: Handle = async ({ event, resolve }) => {
         }
       }
     }
-  );
+  )
 
   /**
    * a little helper that is written for convenience so that instead
