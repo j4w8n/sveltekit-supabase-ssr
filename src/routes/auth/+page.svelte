@@ -3,7 +3,7 @@
 </script>
 
 <form method="POST" action="?/signin">
-  <input name="email" placeholder="email" type="email" value={form?.data?.email}>
+  <input name="email" placeholder="email" type="email" value={form?.data?.email ?? ""}>
   <input name="password" placeholder="password" type="password">
   <button style="margin-top: 12px;">Login</button>
   <button formaction="?/signup" style="margin-top: 12px;">Signup</button>
