@@ -84,7 +84,7 @@ export const actions = {
         data: {
           email
         }
-      });
+      })
     }
   },
   signout: async ({ locals: { supabase } }) => {
