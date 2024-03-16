@@ -6,21 +6,21 @@ settings:
 
 dependencies:
   '@supabase/ssr':
-    specifier: ^0.0.10
-    version: 0.0.10(@supabase/supabase-js@2.39.8)
+    specifier: ^0.1.0
+    version: 0.1.0(@supabase/supabase-js@2.39.8)
   '@supabase/supabase-js':
     specifier: ^2.39.8
     version: 2.39.8
 
 devDependencies:
   '@sveltejs/adapter-auto':
-    specifier: ^3.0.0
+    specifier: ^3.1.1
     version: 3.1.1(@sveltejs/kit@2.5.4)
   '@sveltejs/kit':
-    specifier: ^2.0.0
+    specifier: ^2.5.4
     version: 2.5.4(@sveltejs/vite-plugin-svelte@3.0.2)(svelte@4.2.12)(vite@5.1.6)
   '@sveltejs/vite-plugin-svelte':
-    specifier: ^3.0.0
+    specifier: ^3.0.2
     version: 3.0.2(svelte@4.2.12)(vite@5.1.6)
   svelte:
     specifier: ^4.2.12
@@ -35,7 +35,7 @@ devDependencies:
     specifier: ^5.4.2
     version: 5.4.2
   vite:
-    specifier: ^5.0.0
+    specifier: ^5.1.6
     version: 5.1.6
 
 packages:
@@ -451,8 +451,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@supabase/ssr@0.0.10(@supabase/supabase-js@2.39.8):
-    resolution: {integrity: sha512-eVs7+bNlff8Fd79x8K3Jbfpmf8P8QRA1Z6rUDN+fi4ReWvRBZyWOFfR6eqlsX6vTjvGgTiEqujFSkv2PYW5kbQ==}
+  /@supabase/ssr@0.1.0(@supabase/supabase-js@2.39.8):
+    resolution: {integrity: sha512-bIVrkqjAK5G3KjkIMKYKtAOlCgRRplEWjrlyRyXSOYtgDieiOhk2ZyNAPsEOa1By9OZVxuX5eAW1fitdnuxayw==}
     peerDependencies:
       '@supabase/supabase-js': ^2.33.1
     dependencies:
