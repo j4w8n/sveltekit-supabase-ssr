@@ -5,7 +5,7 @@ export const load = async ({ locals: { getSession } }) => {
   const session = await getSession()
 
   /* User is already logged in. */
-  if (session) throw redirect(303, '/app')
+  if (session) redirect(303, '/app');
 }
 
 export const actions = {
@@ -57,7 +57,7 @@ export const actions = {
       }
 
       /* Login successful, redirect. */
-      throw redirect(303, '/app')
+      redirect(303, '/app');
       
     } else if (provider) {
       /* OAuth sign-in. */
@@ -76,7 +76,7 @@ export const actions = {
       if (error) throw error
 
       /* Now authorize sign-in on browser. */
-      if (data.url) throw redirect(303, data.url)
+      if (data.url) redirect(303, data.url);
 
     } else {
       return fail(400, {
@@ -89,6 +89,6 @@ export const actions = {
   },
   signout: async ({ locals: { supabase } }) => {
     await supabase.auth.signOut()
-    throw redirect(303, '/')
+    redirect(303, '/');
   }
 }

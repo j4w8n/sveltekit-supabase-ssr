@@ -5,7 +5,7 @@ export const load = async ({ locals: { getSession }, depends }) => {
   
   const session = await getSession()
 
-  if (!session) throw redirect(307, '/auth')
+  if (!session) redirect(307, '/auth');
 
   return { session }
 }
