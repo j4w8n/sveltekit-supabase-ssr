@@ -50,3 +50,12 @@ npm run dev
 ```
 
 Open a browser to http://localhost:5173
+
+## Security
+
+Within the `(authenticated)` layout group, we have a `+page.server.ts` file for each route. This ensures that even during client navigation we can verify there's still a session before rendering the page.
+
+We do two things to verify the session:
+
+1. Check for a session object using `getSession()`. This should not be the only thing we rely on to verify the vistor is authenticated. This is because sessions are stored in a cookie sent from a client. The client could be an attacker with just enough information to get past the session check. e.g. `{ access_token: 'got', refresh_token: 'ya', expires_at: 2000000000 }`
+2. We verify the `access_token` within the session was signed by our Supabase project.
