@@ -2,9 +2,7 @@ import { JWT_SECRET } from '$env/static/private'
 import { redirect } from '@sveltejs/kit'
 import jwt from 'jsonwebtoken'
 
-export const load = async ({ locals: { getSession }, depends }) => {
-  depends('supabase:auth')
-  
+export const load = async ({ locals: { getSession } }) => {
   const session = await getSession()
 
   if (!session) redirect(307, '/auth');
