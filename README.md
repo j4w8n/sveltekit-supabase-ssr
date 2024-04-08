@@ -55,7 +55,7 @@ Open a browser to http://localhost:5173
 
 Within the `(authenticated)` layout group, we have a `+page.server.ts` file for each route. This ensures that even during client navigation we can verify there's still a session before rendering the page.
 
-We do two things to verify the session:
+We do two things to verify the session on the server:
 
-1. Check for a session object using `getSession()`. This should not be the only thing we rely on to verify the vistor is authenticated. This is because sessions are stored in a cookie sent from a client. The client could be an attacker with just enough information to get past the session check. e.g. `{ access_token: 'got', refresh_token: 'ya', expires_at: 2000000000 }`
-2. We verify the `access_token` within the session was signed by our Supabase project.
+1. Check for a session object using `getSession()`. This should not be the only thing we rely on to verify the request is authenticated, because sessions are stored in a cookie sent from a client. And the client could be an attacker with just enough information to get past the session check and possibly render data about a victim user. e.g. `{ access_token: 'got', refresh_token: 'ya', expires_at: 2000000000, user: { id: 'valid-victim-user-id' } }`. And, in this example, if our code uses `id` to render sensitive information, or we're using `getSession()` as an authentication guard, this could lead to a security breach or unexpected behavior for valid users (see [here](https://github.com/supabase/auth-helpers/pull/722) for more details.)
+2. We verify that the `access_token` within the session was signed by our Supabase project. This avoids the vulnerability above, because we now know the session and associated data is from a known source.
