@@ -20,21 +20,14 @@ export const handle: Handle = async ({ event, resolve }) => {
   )
 
   /**
-   * Unlike `supabase.auth.getSession`, which is unsafe on the server because it
-   * doesn't validate the JWT, this function validates the JWT by first calling
-   * `getUser` and aborts early if the JWT signature is invalid.
+   * We do not call `getUser()` here, as we're
+   * validating the JWT later on.
    */
   event.locals.getSession = async () => {
     const {
-      error,
-    } = await event.locals.supabase.auth.getUser()
-    if (error) {
-      return null
-    }
-
-    const {
       data: { session },
     } = await event.locals.supabase.auth.getSession()
+    
     return session
   }
 
