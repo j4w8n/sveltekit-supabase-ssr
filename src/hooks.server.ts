@@ -1,6 +1,8 @@
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public'
 import { createServerClient } from '@supabase/ssr'
 import type { Handle } from '@sveltejs/kit'
+import { JWT_SECRET } from '$env/static/private'
+import jwt from 'jsonwebtoken'
 
 export const handle: Handle = async ({ event, resolve }) => {
   event.locals.supabase = createServerClient(
@@ -27,6 +29,17 @@ export const handle: Handle = async ({ event, resolve }) => {
     const {
       data: { session },
     } = await event.locals.supabase.auth.getSession()
+
+    if (!session) return null
+
+    /* Ensures the session is valid. See README Security section for details. */
+    try {
+      jwt.verify(session.access_token, JWT_SECRET, (err) => { 
+        if (err) throw new Error()
+      })
+    } catch (err) {
+      return null
+    }
     
     return session
   }
