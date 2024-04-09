@@ -22,8 +22,8 @@ export const handle: Handle = async ({ event, resolve }) => {
   )
 
   /**
-   * We do not call `getUser()` here, as we're
-   * validating the JWT later on.
+   * We do not call `getUser()` here,
+   * since we're validating the JWT.
    */
   event.locals.getSession = async () => {
     const {
