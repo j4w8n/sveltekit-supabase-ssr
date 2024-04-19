@@ -12,14 +12,8 @@ SvelteKit, Supabase, and lovely SSR Auth
 
 ## Install
 
-> Tweak your Sveltekit creation as desired.
-
 ```
-npm create svelte@latest sveltekit-supabase-ssr
-  > Skeleton project
-  > Yes, using Typescript syntax
-  > none
-
+git clone https://github.com/j4w8n/sveltekit-supabase-ssr
 cd sveltekit-supabase-ssr
 npm install
 ```
