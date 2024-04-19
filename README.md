@@ -13,7 +13,7 @@ SvelteKit, Supabase, and lovely SSR Auth
 ## Install
 
 ```
-git clone https://github.com/j4w8n/sveltekit-supabase-ssr
+git clone https://github.com/j4w8n/sveltekit-supabase-ssr.git
 cd sveltekit-supabase-ssr
 npm install
 ```
