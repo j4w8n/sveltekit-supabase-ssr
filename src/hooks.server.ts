@@ -34,9 +34,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
     /* Ensures the session is valid. See README Security section for details. */
     try {
-      jwt.verify(session.access_token, JWT_SECRET, (err) => { 
-        if (err) throw new Error()
-      })
+      jwt.verify(session.access_token, JWT_SECRET)
     } catch (err) {
       return null
     }
