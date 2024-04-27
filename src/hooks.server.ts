@@ -32,7 +32,12 @@ export const handle: Handle = async ({ event, resolve }) => {
 
     if (!session) return null
 
-    /* Ensures the session is valid. See README Security section for details. */
+    /**
+     * Ensures the session is valid. See README Security section for details.
+     * 
+     * !!! This is not enough to validate using session.user !!!
+     * See "False Security" in https://github.com/orgs/supabase/discussions/23224
+     */
     try {
       jwt.verify(session.access_token, JWT_SECRET)
     } catch (err) {
