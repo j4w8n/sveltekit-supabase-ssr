@@ -49,6 +49,6 @@ Open a browser to http://localhost:5173
 
 Within the `(authenticated)` layout group, we have a `+page.server.ts` file for each route. This ensures that even during client navigation we can verify there's still a session before rendering the page.
 
-We check for and verify the session by calling `event.locals.getSession()`. Verification of the `access_token`, aka JWT, within the session is important, because sessions are stored in a cookie sent from a client. The client could be an attacker with just enough information to bypass checks within `supabase.auth.getSession()` and possibly render data for a victim user.
+We check for and verify the session by calling `event.locals.getSession()`. Verification of the `access_token`, aka JWT, within the session is important, because sessions are stored in a cookie sent from a client. The client could be an attacker with just enough information to bypass checks within `supabase.auth.getSession()` and possibly render data for a victim user. See [this discussion](https://github.com/orgs/supabase/discussions/23224) for details.
 
-e.g. `{ access_token: 'got', refresh_token: 'ya', expires_at: 2000000000, user: { id: 'valid-victim-user-id' } }`. Here, if our code uses `id` to render sensitive information, or we're just using `supabase.auth.getSession()` as an authentication guard, this could lead to a security breach or unexpected behavior for valid users (see [here](https://github.com/supabase/auth-helpers/pull/722) for more details.)
+!!!!! Even verifying the JWT is not enough to use information inside of `session` in order to render sensitive user data. See discussion link above. !!!!!
