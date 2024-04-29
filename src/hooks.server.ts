@@ -35,8 +35,10 @@ export const handle: Handle = async ({ event, resolve }) => {
     /**
      * Ensures the session is valid. See README Security section for details.
      * 
-     * !!! This is not enough to validate using session.user !!!
+     * !!! Verifying the JWT is not enough to validate using session.user info to render sensitive user data on the server-side. !!!
      * See "False Security" in https://github.com/orgs/supabase/discussions/23224
+     * The safest and easiest way to do this is by calling `getUser()` and using the returned data.
+     * An alternative, which doesn't make a network call, is to extract information from the decoded JWT. 
      */
     try {
       jwt.verify(session.access_token, JWT_SECRET)
