@@ -29,12 +29,13 @@ export const handle: Handle = async ({ event, resolve }) => {
     if (!session) return null
 
     /**
-     * Ensures the session is valid and authenticated. See README Security section for details.
+     * Ensures the session is fully validated. See README Security section for details.
      * 
-     * !!! Verifying the JWT does not validate the `session.user` object for use. !!!
+     * !!! Simply verifying the JWT does not validate the `session.user` object for use. !!!
      * See "False Security" in https://github.com/orgs/supabase/discussions/23224
-     * The safest and easiest way to validate the session is by calling `getUser()` and using it's returned data.
-     * An alternative, which does not make a network call, is to create a validated session; which we do below. 
+     * The safest and easiest way to validate the session is by calling `getUser()`
+     * and using it's returned data. An alternative, which does not make a network call, 
+     * is to create a validated session; which we do below. 
      */
     try {
       const decoded = jwt.verify(session.access_token, JWT_SECRET)
@@ -43,7 +44,7 @@ export const handle: Handle = async ({ event, resolve }) => {
       if (typeof decoded === 'string') return null
 
       /**
-       * Create a verified session.
+       * Create a validated session.
        * 
        * Most of these properties are required for functionality or typing.
        * Add any data needed for your layouts or pages. In this example,
@@ -54,7 +55,7 @@ export const handle: Handle = async ({ event, resolve }) => {
        * especially unique user data like `id`, an email address, or any other
        * user-unique data for queries.
        */
-      const synthetic_session = {
+      const validated_session = {
         access_token: session.access_token,
         refresh_token: session.refresh_token,
         expires_at: decoded.exp,
@@ -71,7 +72,7 @@ export const handle: Handle = async ({ event, resolve }) => {
         }
       }
 
-      return synthetic_session
+      return validated_session
     } catch (err) {
       return null
     }
