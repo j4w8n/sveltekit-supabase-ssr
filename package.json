@@ -25,10 +25,5 @@
 		"@supabase/ssr": "^0.3.0",
 		"@supabase/supabase-js": "^2.43.0",
 		"jsonwebtoken": "^9.0.2"
-	},
-	"pnpm": {
-		"overrides": {
-			"@supabase/supabase-js>@supabase/auth-js": "2.64.2-rc.rc.1"
-		}
 	}
 }
