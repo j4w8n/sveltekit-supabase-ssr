@@ -24,7 +24,7 @@
   <a href="/">Home</a>
   {#if session}
     <a href="/app">App</a>
-    <a href="/admin">Admin</a>
+    <a href="/self">Self</a>
     <img style="width: 32px; height: 32px; border-radius: 9999px;" src={session.user.user_metadata.avatar_url} alt="person_avatar">
     <form method="POST" action="auth?/signout">
       <button>Logout</button>

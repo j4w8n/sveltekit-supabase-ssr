@@ -1,6 +1,6 @@
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public'
 import { createServerClient } from '@supabase/ssr'
-import type { Handle } from '@sveltejs/kit'
+import { redirect, type Handle } from '@sveltejs/kit'
 import { JWT_SECRET } from '$env/static/private'
 import jwt from 'jsonwebtoken'
 
@@ -21,10 +21,6 @@ export const handle: Handle = async ({ event, resolve }) => {
     }
   )
 
-  /**
-   * We do not call `getUser()` here,
-   * since we're validating the JWT.
-   */
   event.locals.getSession = async () => {
     const {
       data: { session },
@@ -33,21 +29,65 @@ export const handle: Handle = async ({ event, resolve }) => {
     if (!session) return null
 
     /**
-     * Ensures the session is valid. See README Security section for details.
+     * Ensures the session is valid and authenticated. See README Security section for details.
      * 
-     * !!! Verifying the JWT is not enough to validate using session.user info to render sensitive user data on the server-side. !!!
+     * !!! Verifying the JWT does not validate the `session.user` object for use. !!!
      * See "False Security" in https://github.com/orgs/supabase/discussions/23224
-     * The safest and easiest way to do this is by calling `getUser()` and using the returned data.
-     * An alternative, which doesn't make a network call, is to extract information from the decoded JWT. 
+     * The safest and easiest way to validate the session is by calling `getUser()` and using it's returned data.
+     * An alternative, which does not make a network call, is to create a validated session; which we do below. 
      */
     try {
-      jwt.verify(session.access_token, JWT_SECRET)
+      const decoded = jwt.verify(session.access_token, JWT_SECRET)
+
+      /* Supabase decoded JWTs will never be a string. */
+      if (typeof decoded === 'string') return null
+
+      /**
+       * Create a verified session.
+       * 
+       * Most of these properties are required for functionality or typing.
+       * Add any data needed for your layouts or pages. In this example,
+       * the only property which isn't required is `user.user_metadata.avatar_url`,
+       * otherwise we'd just need to leave `user.user_metadata` as an empty object.
+       * 
+       * If possible, avoid using anything from `session.user` to populate these,
+       * especially unique user data like `id`, an email address, or any other
+       * user-unique data for queries.
+       */
+      const synthetic_session = {
+        access_token: session.access_token,
+        refresh_token: session.refresh_token,
+        expires_at: decoded.exp,
+        expires_in: decoded.exp! - Math.round(Date.now() / 1000),
+        token_type: 'bearer',
+        user: {
+          app_metadata: {},
+          aud: 'authenticated',
+          created_at: '',
+          id: decoded.sub!,
+          user_metadata: {
+            avatar_url: decoded.user_metadata.avatar_url
+          }
+        }
+      }
+
+      return synthetic_session
     } catch (err) {
       return null
     }
-    
-    return session
   }
+
+  const session = await event.locals.getSession()
+
+  /**
+   * Only authenticated users can access these paths and their sub-paths.
+   * 
+   * If you'd rather do this in your routes, see (authenticated)/app/+page.server.ts
+   * for an example.
+   */
+  const auth_protected_paths = new Set(['app', 'self'])
+  if (!session && auth_protected_paths.has(event.url.pathname.split('/')[1])) 
+    redirect(307, '/auth')
 
   return resolve(event, {
     filterSerializedResponseHeaders(name) {
