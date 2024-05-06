@@ -3,6 +3,8 @@ import { createServerClient } from '@supabase/ssr'
 import { redirect, type Handle } from '@sveltejs/kit'
 import { JWT_SECRET } from '$env/static/private'
 import jwt from 'jsonwebtoken'
+import type { Session } from '@supabase/supabase-js'
+import type { SupabaseJwt } from './types.js'
 
 export const handle: Handle = async ({ event, resolve }) => {
   event.locals.supabase = createServerClient(
@@ -38,10 +40,7 @@ export const handle: Handle = async ({ event, resolve }) => {
      * is to create a validated session; which we do below. 
      */
     try {
-      const decoded = jwt.verify(session.access_token, JWT_SECRET)
-
-      /* Supabase decoded JWTs will never be a string. */
-      if (typeof decoded === 'string') return null
+      const decoded = jwt.verify(session.access_token, JWT_SECRET) as SupabaseJwt
 
       /**
        * Create a validated session.
@@ -55,17 +54,17 @@ export const handle: Handle = async ({ event, resolve }) => {
        * especially unique user data like `id`, an email address, or any other
        * user-unique data for queries.
        */
-      const validated_session = {
+      const validated_session: Session = {
         access_token: session.access_token,
         refresh_token: session.refresh_token,
         expires_at: decoded.exp,
-        expires_in: decoded.exp! - Math.round(Date.now() / 1000),
+        expires_in: decoded.exp - Math.round(Date.now() / 1000),
         token_type: 'bearer',
         user: {
           app_metadata: {},
           aud: 'authenticated',
           created_at: '',
-          id: decoded.sub!,
+          id: decoded.sub,
           user_metadata: {
             avatar_url: decoded.user_metadata.avatar_url
           }
