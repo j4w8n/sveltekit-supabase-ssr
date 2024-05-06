@@ -8,8 +8,11 @@
   <button style="margin-top: 12px;">Login</button>
   <button formaction="?/signup" style="margin-top: 12px;">Signup</button>
 </form>
-<form method="POST" action="?/signin">
+<form method="POST" action="?/oauth">
   <button style="margin-top: 12px;" name="provider" value="github">Login with GitHub</button>
+</form>
+<form method="POST" action="?/anon">
+  <button style="margin-top: 12px;">Login Anonymously</button>
 </form>
 
 {#if form?.message}
