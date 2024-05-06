@@ -25,7 +25,7 @@
   {#if session}
     <a href="/app">App</a>
     <a href="/self">Self</a>
-    <img style="width: 32px; height: 32px; border-radius: 9999px;" src={session.user.user_metadata.avatar_url} alt="person_avatar">
+    <img style="width: 32px; height: 32px; border-radius: 9999px;" src={session.user.user_metadata.avatar_url ?? 'https://api.dicebear.com/8.x/fun-emoji/svg'} alt="person_avatar">
     <form method="POST" action="auth?/signout">
       <button>Logout</button>
     </form>
