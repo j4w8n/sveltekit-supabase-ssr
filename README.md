@@ -30,7 +30,7 @@ npm install
 
 2. Environment variables.
     
-    Create a `src/env.local` file.
+    Create a `.env.local` file.
     ```
     PUBLIC_SUPABASE_ANON_KEY=<your-project-anon-key>
     PUBLIC_SUPABASE_URL=https://<your-project-id>.supabase.co
