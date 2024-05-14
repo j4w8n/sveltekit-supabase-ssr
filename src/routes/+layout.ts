@@ -11,13 +11,19 @@ export const load = async ({ fetch, data, depends }) => {
     {
       global: { fetch },
       cookies: {
-        get(key) {
+        async get() {
           if (!isBrowser()) {
             return JSON.stringify(data.session)
           }
   
-          const cookie = parse(document.cookie)
-          return cookie[key]
+          try {
+            const res = await fetch('/cookie')
+            return await res.json()
+          } catch (err) {
+            console.error(err)
+            return null
+          }
+          
         }
       }
     }

@@ -14,10 +14,10 @@ export const handle: Handle = async ({ event, resolve }) => {
       cookies: {
         get: (key) => event.cookies.get(key),
         set: (key, value, options) => {
-          event.cookies.set(key, value, { ...options, path: '/' })
+          event.cookies.set(key, value, { ...options, path: '/', httpOnly: true })
         },
         remove: (key, options) => {
-          event.cookies.delete(key, { ...options, path: '/' })
+          event.cookies.delete(key, { ...options, path: '/', httpOnly: true })
         }
       }
     }
@@ -78,6 +78,9 @@ export const handle: Handle = async ({ event, resolve }) => {
   }
 
   const session = await event.locals.getSession()
+
+  if (event.url.pathname === '/cookie')
+    return new Response(JSON.stringify(session))
 
   /**
    * Only authenticated users can access these paths and their sub-paths.
