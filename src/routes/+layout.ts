@@ -17,7 +17,7 @@ export const load = async ({ fetch, data, depends }) => {
           }
   
           try {
-            const res = await fetch('/cookie')
+            const res = await fetch('/session')
             return await res.json()
           } catch (err) {
             console.error(err)

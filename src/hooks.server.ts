@@ -79,7 +79,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
   const session = await event.locals.getSession()
 
-  if (event.url.pathname === '/cookie')
+  if (event.url.pathname === '/session' && event.request.method === 'GET')
     return new Response(JSON.stringify(session))
 
   /**
