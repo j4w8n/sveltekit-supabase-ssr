@@ -19,5 +19,5 @@
   <p>{form.message}</p>
 {/if}
 {#if form?.error}
-  <p>{form.error}</p>
+  <p style="color: red;">{form.error}</p>
 {/if}
