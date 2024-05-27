@@ -1,6 +1,6 @@
-# MVP for "SSalSA" stack
+# Auth and User Demo
 
-SvelteKit, Supabase, and lovely SSR Auth
+Uses SvelteKit, Supabase, and SSR Auth.
 
 ## Code Showcase
 
@@ -8,6 +8,7 @@ SvelteKit, Supabase, and lovely SSR Auth
 - Anon sign in.
 - GitHub sign-in. Can easily be changed to other oauth providers.
 - Requires a session to access all pages under the `authenticated` layout group.
+- Add, change, remove custom `nickname` user_metadata on the `/self` page.
 
 > All sign-up and sign-ins happen server-side.
 

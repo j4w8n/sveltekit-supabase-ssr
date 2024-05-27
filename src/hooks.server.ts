@@ -47,7 +47,7 @@ export const handle: Handle = async ({ event, resolve }) => {
        * 
        * Most of these properties are required for functionality or typing.
        * Add any data needed for your layouts or pages. In this example,
-       * the only property which isn't required is `user.user_metadata.avatar_url`,
+       * the only properties which aren't required are `user.user_metadata.avatar_url & .nickname`,
        * otherwise we'd just need to leave `user.user_metadata` as an empty object.
        * 
        * If possible, avoid using anything from `session.user` to populate these,
@@ -66,7 +66,8 @@ export const handle: Handle = async ({ event, resolve }) => {
           created_at: '',
           id: decoded.sub,
           user_metadata: {
-            avatar_url: decoded.user_metadata.avatar_url
+            avatar_url: decoded.user_metadata?.avatar_url,
+            nickname: decoded.user_metadata?.nickname
           }
         }
       }

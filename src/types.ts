@@ -1,22 +1,24 @@
 export type SupabaseJwt = {
+  aal: string;
   aud: string;
+  email: string;
   exp: number;
   iat: number;
-  iss: string;
-  sub: string;
-  email: string;
   phone: string;
-  app_metadata: { 
+  role: string;
+  session_id: string;
+  sub: string;
+  amr?: { method: string; timestamp: number; }[];
+  app_metadata?: { 
     provider?: string;
     providers?: string[];
     [key: string]: any;
-  },
-  user_metadata: {
+  };
+  is_anonymous?: boolean;
+  iss?: string;
+  jti?: string;
+  nbf?: string;
+  user_metadata?: {
     [key: string]: any;
-  },
-  role: string;
-  aal: string;
-  amr: { method: string; timestamp: number; }[],
-  session_id: string;
-  is_anonymous: boolean;
+  };
 }
