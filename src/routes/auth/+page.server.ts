@@ -100,6 +100,12 @@ export const actions = {
       email
     })
 
+    if (!email) {
+      return fail(400, {
+        error: 'Please enter an email'
+      })
+    }
+
     if (error) 
       console.error(error)
     else
