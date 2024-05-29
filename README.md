@@ -12,6 +12,11 @@ Uses SvelteKit, Supabase, and SSR Auth.
 
 > All sign-up and sign-ins happen server-side.
 
+## Prerequisites
+
+1. A Supabase account.
+2. A Supabase project.
+
 ## Install
 
 ```
@@ -23,6 +28,7 @@ npm install
 ## Setup
 
 1. Supabase types
+    This step isn't strictly necessary for the demo, but it's likely you'll want to do this at some point.
     ```
     supabase init
     supabase link --project-ref <your-project-id>
@@ -31,13 +37,22 @@ npm install
 
 2. Environment variables.
     
-    Create a `.env.local` file in your project's root directory.
+    Create a `.env.local` file in your project's root directory, adding the below. The values can be found in your Supabase dashboard, then your project > Project Settings > API
     ```
     PUBLIC_SUPABASE_ANON_KEY=<your-project-anon-key>
     PUBLIC_SUPABASE_URL=https://<your-project-id>.supabase.co
     ```
 
 3. Change email templates, per [official docs](https://supabase.com/docs/guides/auth/server-side/email-based-auth-with-pkce-flow-for-ssr?framework=sveltekit#update-email-templates-with-url-for-api-endpoint)
+
+4. Site URL and Redirect URLs
+
+    Login to your Supabase dashboard, then go to your project > Authentication > URL Configuration, and add these:
+    - Site:
+        - `http://localhost:5173`
+    - Redirects:
+        - `http://localhost:5173/auth/confirm`
+        - `http://localhost:5173/auth/callback`
 
 ## Run!
 
