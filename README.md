@@ -37,10 +37,9 @@ npm install
     ```
 
 2. If using the demo's signup or magiclink login, change your email template links per the below. You can find these settings in your Supabase project's dashboard at Authentication > Email Templates.
-    > Please note that `&next=/app` is for demo use only. If you end up using your Supabase project in a real app, you may need to change or remove this; or you can choose to not add it for the demo. 
 
-    - Confirm signup: `href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next=/app"`
-    - Magic Link: `href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next=/app"`
+    - Confirm signup: `href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email"`
+    - Magic Link: `href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email"`
 
 3. Site URL and Redirect URLs
 
