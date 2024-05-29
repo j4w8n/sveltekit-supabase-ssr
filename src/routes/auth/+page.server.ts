@@ -92,6 +92,19 @@ export const actions = {
     /* Now authorize sign-in on browser. */
     if (data.url) redirect(303, data.url)
   },
+  magic: async ({ request, locals: { supabase }}) => {
+    const formData = await request.formData()
+    const email = formData.get('email') as string
+
+    const { error } = await supabase.auth.signInWithOtp({
+      email
+    })
+
+    if (error) 
+      console.error(error)
+    else
+      return { message: 'Please check your email to login.' }
+  },
   anon: async ({ locals: { supabase }}) => {
     const { error } = await supabase.auth.signInAnonymously()
 
