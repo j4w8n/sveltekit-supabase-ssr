@@ -37,10 +37,11 @@ npm install
 
 2. Environment variables.
     
-    Create a `.env.local` file in your project's root directory, adding the below. The values can be found in your Supabase dashboard, then your project > Project Settings > API
+    Create a `.env.local` file in your project's root directory, adding the below. The values can be found in your Supabase dashboard, then your project > Project Settings > API. !!! Never expose your `JWT_SECRET` on the client side !!!
     ```
     PUBLIC_SUPABASE_ANON_KEY=<your-project-anon-key>
     PUBLIC_SUPABASE_URL=https://<your-project-id>.supabase.co
+    JWT_SECRET=<your-project-jwt-secret>
     ```
 
 3. Change email templates, per [official docs](https://supabase.com/docs/guides/auth/server-side/email-based-auth-with-pkce-flow-for-ssr?framework=sveltekit#update-email-templates-with-url-for-api-endpoint)
