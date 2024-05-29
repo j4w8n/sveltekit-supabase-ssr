@@ -29,14 +29,18 @@ npm install
 
 1. Environment variables.
     
-    Create a `.env.local` file in your project's root directory, adding the below. The values can be found in your Supabase dashboard, then your project > Project Settings > API. !!! Never expose your `JWT_SECRET` on the client side !!!
+    Create a `.env.local` file in your project's root directory, adding the below. The values can be found in your Supabase project's dashboard at Project Settings > API. !!! Never expose your `JWT_SECRET` on the client side !!!
     ```
     PUBLIC_SUPABASE_ANON_KEY=<your-project-anon-key>
     PUBLIC_SUPABASE_URL=https://<your-project-id>.supabase.co
     JWT_SECRET=<your-project-jwt-secret>
     ```
 
-2. Change email templates, per [official docs](https://supabase.com/docs/guides/auth/server-side/email-based-auth-with-pkce-flow-for-ssr?framework=sveltekit#update-email-templates-with-url-for-api-endpoint)
+2. If using the demo's signup or magiclink login, change your email template links per the below. You can find these settings in your Supabase project's dashboard at Authentication > Email Templates.
+    > Please note that `&next=/app` is for demo use only. If you end up using your Supabase project in a real app, you may need to change or remove this; or you can choose to not add it for the demo. 
+
+    - Confirm signup: `href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next=/app"`
+    - Magic Link: `href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next=/app"`
 
 3. Site URL and Redirect URLs
 
