@@ -25,8 +25,7 @@ export const actions = {
 
     const { error } = await supabase.auth.signUp({
       email,
-      password,
-      options: { emailRedirectTo: `${url.origin}/app` }
+      password
     })
 
     if (error) 
