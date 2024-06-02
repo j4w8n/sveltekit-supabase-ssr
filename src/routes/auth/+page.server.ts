@@ -28,10 +28,16 @@ export const actions = {
       password
     })
 
-    if (error) 
-      console.error(error)
-    else
+    if (error) {
+      return fail(400, {
+        error: error.message,
+        data: {
+          email
+        }
+      })
+    } else {
       return { message: 'Please check your email to confirm your signup.' }
+    }
   },
   signin: async ({ request, locals: { supabase } }) => {
     const formData = await request.formData()
