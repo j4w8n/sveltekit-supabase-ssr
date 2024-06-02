@@ -1,6 +1,15 @@
 import { fail, redirect } from '@sveltejs/kit'
 import { type Provider } from '@supabase/supabase-js'
 
+const Fail = (error: { message: string, status?: number, name?: string }, data?: { email?: string }) => {
+  return fail(error.status ?? 400, {
+    error: error.message,
+    data: {
+      email: data?.email
+    }
+  })
+}
+
 export const load = async ({ locals: { getSession } }) => {
   const session = await getSession()
 
@@ -14,58 +23,40 @@ export const actions = {
     const email = formData.get('email') as string
     const password = formData.get('password') as string
 
-    if (!email || !password) {
-      return fail(400, {
-        error: 'Please enter an email and password',
-        data: {
-          email
-        }
-      })
-    }
+    if (!email || !password)
+      return Fail(
+        { message: 'Please enter an email and password' }, 
+        { email }
+      )
 
     const { error } = await supabase.auth.signUp({
       email,
       password
     })
 
-    if (error) {
-      return fail(error.status, {
-        error: error.message,
-        data: {
-          email
-        }
-      })
-    } else {
+    if (error)
+      return Fail(error, { email })
+    else
       return { message: 'Please check your email to confirm your signup.' }
-    }
   },
   signin: async ({ request, locals: { supabase } }) => {
     const formData = await request.formData()
     const email = formData.get('email') as string
     const password = formData.get('password') as string
 
-    if (!email || !password) {
-      return fail(400, {
-        error: 'Please enter an email and password',
-        data: {
-          email
-        }
-      })
-    }
+    if (!email || !password)
+      return Fail(
+        { message: 'Please enter an email and password' }, 
+        { email }
+      )
     
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password
     })
   
-    if (error) {
-      return fail(error.status, {
-        error: error.message,
-        data: {
-          email
-        }
-      })
-    }
+    if (error)
+      return Fail(error, { email })
 
     /* Login successful, redirect. */
     redirect(303, '/app')
@@ -85,11 +76,8 @@ export const actions = {
       }
     })
 
-    if (error) {
-      return fail(error.status, {
-        error: error.message
-      })
-    }
+    if (error)
+      return Fail(error)
 
     /* Now authorize sign-in on browser. */
     if (data.url) redirect(303, data.url)
@@ -98,35 +86,23 @@ export const actions = {
     const formData = await request.formData()
     const email = formData.get('email') as string
 
-    if (!email) {
-      return fail(400, {
-        error: 'Please enter an email'
-      })
-    }
+    if (!email)
+      return Fail({ message: 'Please enter an email.' })
 
     const { error } = await supabase.auth.signInWithOtp({
       email
     })
 
-    if (error) {
-      return fail(error.status, {
-        error: error.message,
-        data: {
-          email
-        }
-      })
-    } else {
+    if (error)
+      return Fail(error, { email })
+    else
       return { message: 'Please check your email to login.' }
-    }
   },
   anon: async ({ locals: { supabase }}) => {
     const { error } = await supabase.auth.signInAnonymously()
 
-    if (error) {
-      return fail(error.status, {
-        error: error.message
-      })
-    }
+    if (error)
+      return Fail(error)
 
     /* Login successful, redirect. */
     redirect(303, '/app')
