@@ -1,5 +1,5 @@
 import { fail, redirect } from '@sveltejs/kit'
-import { AuthApiError, type Provider } from '@supabase/supabase-js'
+import { type Provider } from '@supabase/supabase-js'
 
 export const load = async ({ locals: { getSession } }) => {
   const session = await getSession()
@@ -9,7 +9,7 @@ export const load = async ({ locals: { getSession } }) => {
 }
 
 export const actions = {
-  signup: async ({ request, url, locals: { supabase } }) => {
+  signup: async ({ request, locals: { supabase } }) => {
     const formData = await request.formData()
     const email = formData.get('email') as string
     const password = formData.get('password') as string
@@ -29,7 +29,7 @@ export const actions = {
     })
 
     if (error) {
-      return fail(400, {
+      return fail(error.status, {
         error: error.message,
         data: {
           email
@@ -59,16 +59,8 @@ export const actions = {
     })
   
     if (error) {
-      if (error instanceof AuthApiError && error.status === 400) {
-        return fail(400, {
-          error: 'Invalid credentials.',
-          data: {
-            email
-          }
-        })
-      }
-      return fail(500, {
-        error: 'Server error. Try again later.',
+      return fail(error.status, {
+        error: error.message,
         data: {
           email
         }
@@ -93,7 +85,11 @@ export const actions = {
       }
     })
 
-    if (error) throw error
+    if (error) {
+      return fail(error.status, {
+        error: error.message
+      })
+    }
 
     /* Now authorize sign-in on browser. */
     if (data.url) redirect(303, data.url)
@@ -102,27 +98,33 @@ export const actions = {
     const formData = await request.formData()
     const email = formData.get('email') as string
 
-    const { error } = await supabase.auth.signInWithOtp({
-      email
-    })
-
     if (!email) {
       return fail(400, {
         error: 'Please enter an email'
       })
     }
 
-    if (error) 
-      console.error(error)
-    else
+    const { error } = await supabase.auth.signInWithOtp({
+      email
+    })
+
+    if (error) {
+      return fail(error.status, {
+        error: error.message,
+        data: {
+          email
+        }
+      })
+    } else {
       return { message: 'Please check your email to login.' }
+    }
   },
   anon: async ({ locals: { supabase }}) => {
     const { error } = await supabase.auth.signInAnonymously()
 
     if (error) {
-      return fail(500, {
-        error: 'Server error. Try again later.'
+      return fail(error.status, {
+        error: error.message
       })
     }
 
