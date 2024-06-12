@@ -14,8 +14,8 @@ export const handle: Handle = async ({ event, resolve }) => {
       cookies: {
         getAll: () => event.cookies.getAll(),
         setAll: (cookies) => {
-          cookies.forEach((c) => {
-            event.cookies.set(c.name, c.value, { ...c.options, path: '/' })
+          cookies.forEach(({ name, value, options }) => {
+            event.cookies.set(name, value, { ...options, path: '/' })
           })
         }
       }
