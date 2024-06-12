@@ -10,20 +10,20 @@
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-auto": "^3.2.0",
-		"@sveltejs/kit": "^2.5.7",
-		"@sveltejs/vite-plugin-svelte": "^3.1.0",
+		"@sveltejs/adapter-auto": "^3.2.1",
+		"@sveltejs/kit": "^2.5.10",
+		"@sveltejs/vite-plugin-svelte": "^3.1.1",
 		"@types/jsonwebtoken": "^9.0.6",
-		"svelte": "^4.2.15",
-		"svelte-check": "^3.7.1",
-		"tslib": "^2.6.2",
+		"svelte": "^4.2.18",
+		"svelte-check": "^3.8.0",
+		"tslib": "^2.6.3",
 		"typescript": "^5.4.5",
-		"vite": "^5.2.11"
+		"vite": "^5.2.13"
 	},
 	"type": "module",
 	"dependencies": {
 		"@supabase/ssr": "~0.3.0",
-		"@supabase/supabase-js": "^2.43.1",
+		"@supabase/supabase-js": "^2.43.4",
 		"jsonwebtoken": "^9.0.2"
 	}
 }
