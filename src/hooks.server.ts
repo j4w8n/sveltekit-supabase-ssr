@@ -85,8 +85,8 @@ export const handle: Handle = async ({ event, resolve }) => {
    * If you'd rather do this in your routes, see (authenticated)/app/+page.server.ts
    * for an example.
    */
-  const auth_protected_paths = new Set(['app', 'self'])
-  if (!session && auth_protected_paths.has(event.url.pathname.split('/')[1])) 
+  const auth_protected_paths = new Set(['(authenticated)'])
+  if (!session && auth_protected_paths.has(event.route.id?.split('/')[1] || '')) 
     redirect(307, '/auth')
 
   return resolve(event, {
