@@ -84,6 +84,10 @@ export const handle: Handle = async ({ event, resolve }) => {
    * 
    * If you'd rather do this in your routes, see (authenticated)/app/+page.server.ts
    * for an example.
+   * 
+   * If you don't use a layout group for auth-protected paths, then you can use
+   * new Set(['app', 'self']) or whatever your top-level path segments are, and
+   * .has(event.url.pathname.split('/')[1])
    */
   const auth_protected_paths = new Set(['(authenticated)'])
   if (!session && auth_protected_paths.has(event.route.id?.split('/')[1] || '')) 
