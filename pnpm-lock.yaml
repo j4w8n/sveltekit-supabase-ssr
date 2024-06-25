@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@supabase/ssr':
-    specifier: 0.4.0-rc.2
-    version: 0.4.0-rc.2(@supabase/supabase-js@2.43.4)
+    specifier: 0.4.0
+    version: 0.4.0(@supabase/supabase-js@2.43.4)
   '@supabase/supabase-js':
     specifier: ^2.43.4
     version: 2.43.4
@@ -480,8 +480,8 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@supabase/ssr@0.4.0-rc.2(@supabase/supabase-js@2.43.4):
-    resolution: {integrity: sha512-CnyORg8lNeqe9Lsz1Peo6NDb+8zJ2ASd6Bdrt0j25gJhZUnk5kMsUH0xHB3FmZWSTz0km/BQOTjtg8q2C3GMjg==}
+  /@supabase/ssr@0.4.0(@supabase/supabase-js@2.43.4):
+    resolution: {integrity: sha512-6WS3NUvHDhCPAFN2kJ79AQDO8+M9fJ7y2fYpxgZqIuJEpnnGsHDNnB5Xnv8CiaJIuRU+0pKboy62RVZBMfZ0Lg==}
     peerDependencies:
       '@supabase/supabase-js': ^2.43.4
     dependencies:
