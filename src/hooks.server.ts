@@ -61,7 +61,7 @@ export const handle: Handle = async ({ event, resolve }) => {
         expires_in: decoded.exp - Math.round(Date.now() / 1000),
         token_type: 'bearer',
         user: {
-          app_metadata: {},
+          app_metadata: decoded.app_metadata ?? {},
           aud: 'authenticated',
           created_at: '',
           id: decoded.sub,

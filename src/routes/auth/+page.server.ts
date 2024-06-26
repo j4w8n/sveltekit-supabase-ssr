@@ -107,6 +107,20 @@ export const actions = {
     /* Login successful, redirect. */
     redirect(303, '/app')
   },
+  reset: async({ request, locals: { supabase } }) => {
+    const formData = await request.formData()
+    const email = formData.get('email') as string
+
+    if (!email)
+      return Fail({ message: 'Please enter an email.' })
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email)
+
+    if (error)
+      return Fail(error, { email })
+    else
+      return { message: 'Please check your email to reset your password.' }
+  },
   signout: async ({ locals: { supabase } }) => {
     await supabase.auth.signOut()
     redirect(303, '/')

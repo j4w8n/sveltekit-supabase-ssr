@@ -18,6 +18,10 @@
 <form method="POST" action="?/anon">
   <button style="margin-top: 12px;">Login Anonymously</button>
 </form>
+<form method="POST" action="?/reset">
+  <input name="email" placeholder="email" type="email">
+  <button style="margin-top: 12px;">Reset Your Password</button>
+</form>
 
 {#if form?.message}
   <p>{form.message}</p>
