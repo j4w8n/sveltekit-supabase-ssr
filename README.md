@@ -5,6 +5,7 @@ Uses SvelteKit, Supabase, and SSR Auth.
 ## Code Showcase
 
 - Email sign-up/sign-in.
+- Reset password for email sign-in.
 - Anon sign in.
 - GitHub sign-in. Can easily be changed to other oauth providers.
 - Requires a session to access all pages under the `authenticated` layout group.
