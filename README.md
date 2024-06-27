@@ -39,7 +39,7 @@ npm install
 
 2. If using the demo's signup, magiclink, or reset password features, change your email template links per the below. You can find these settings in your Supabase project's dashboard at Authentication > Email Templates.
 
-All use this: `href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email"`, and then there are some additions for magic link and reset:
+    All use this: `href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email"`, and then there are some additions for magic link and reset:
 
     - Magic Link: add `&next=/app` at the end of the above href.
     - Reset Password: add `&next=/self` at the end of the above href. 
