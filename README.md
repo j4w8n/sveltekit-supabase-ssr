@@ -5,7 +5,9 @@ Uses SvelteKit, Supabase, and SSR Auth.
 ## Code Showcase
 
 - Email sign-up/sign-in.
-- Anon sign in.
+- Reset password for email sign-in.
+- Anonymous sign in.
+- Convert Anonymous user to permanent user.
 - GitHub sign-in. Can easily be changed to other oauth providers.
 - Requires a session to access all pages under the `authenticated` layout group.
 - Add, change, remove custom `nickname` user_metadata on the `/self` page.
@@ -36,10 +38,12 @@ npm install
     JWT_SECRET=<your-project-jwt-secret>
     ```
 
-2. If using the demo's signup or magiclink login, change your email template links per the below. You can find these settings in your Supabase project's dashboard at Authentication > Email Templates.
+2. If using the demo's signup, magiclink, or reset password features, change your email template links per the below. You can find these settings in your Supabase project's dashboard at Authentication > Email Templates.
 
-    - Confirm signup: `href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email"`
-    - Magic Link: `href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email"`
+    All use this: `href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email"`, and then there are some additions for magic link and reset:
+
+    - Magic Link: add `&next=/app` at the end of the above href.
+    - Reset Password: add `&next=/self` at the end of the above href. 
 
 3. Site URL and Redirect URLs
 
@@ -49,6 +53,10 @@ npm install
     - Redirects:
         - `http://localhost:5173/auth/confirm`
         - `http://localhost:5173/auth/callback`
+
+4. If using OAuth or Email/Password features, enable Email and GitHub as providers.
+
+    Login to your Supabase dashbord, then go to your project > Authentication > Providers
 
 ## Run!
 

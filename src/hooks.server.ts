@@ -12,12 +12,11 @@ export const handle: Handle = async ({ event, resolve }) => {
     PUBLIC_SUPABASE_ANON_KEY,
     {
       cookies: {
-        get: (key) => event.cookies.get(key),
-        set: (key, value, options) => {
-          event.cookies.set(key, value, { ...options, path: '/', httpOnly: true })
-        },
-        remove: (key, options) => {
-          event.cookies.delete(key, { ...options, path: '/', httpOnly: true })
+        getAll: () => event.cookies.getAll(),
+        setAll: (cookies) => {
+          cookies.forEach(({ name, value, options }) => {
+            event.cookies.set(name, value, { ...options, path: '/' })
+          })
         }
       }
     }
@@ -61,14 +60,15 @@ export const handle: Handle = async ({ event, resolve }) => {
         expires_in: decoded.exp - Math.round(Date.now() / 1000),
         token_type: 'bearer',
         user: {
-          app_metadata: {},
+          app_metadata: decoded.app_metadata ?? {},
           aud: 'authenticated',
           created_at: '',
           id: decoded.sub,
           user_metadata: {
             avatar_url: decoded.user_metadata?.avatar_url,
             nickname: decoded.user_metadata?.nickname
-          }
+          },
+          is_anonymous: decoded.is_anonymous
         }
       }
 
@@ -88,9 +88,13 @@ export const handle: Handle = async ({ event, resolve }) => {
    * 
    * If you'd rather do this in your routes, see (authenticated)/app/+page.server.ts
    * for an example.
+   * 
+   * If you don't use a layout group for auth-protected paths, then you can use
+   * new Set(['app', 'self']) or whatever your top-level path segments are, and
+   * .has(event.url.pathname.split('/')[1])
    */
-  const auth_protected_paths = new Set(['app', 'self'])
-  if (!session && auth_protected_paths.has(event.url.pathname.split('/')[1])) 
+  const auth_protected_paths = new Set(['(authenticated)'])
+  if (!session && auth_protected_paths.has(event.route.id?.split('/')[1] || '')) 
     redirect(307, '/auth')
 
   return resolve(event, {
