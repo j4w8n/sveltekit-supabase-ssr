@@ -1,3 +1,5 @@
+import type { CookieOptions } from "@supabase/ssr"
+
 export type SupabaseJwt = {
   aal: string;
   aud: string;
@@ -22,3 +24,9 @@ export type SupabaseJwt = {
     [key: string]: any;
   };
 }
+
+export type CookieArray = {
+  name: string;
+  value: string;
+  options: CookieOptions
+}[]

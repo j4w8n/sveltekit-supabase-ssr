@@ -1,10 +1,10 @@
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public'
-import { createServerClient } from '@supabase/ssr'
+import { createServerClient, serializeCookieHeader } from '@supabase/ssr'
 import { redirect, type Handle } from '@sveltejs/kit'
 import { JWT_SECRET } from '$env/static/private'
 import jwt from 'jsonwebtoken'
 import type { Session } from '@supabase/supabase-js'
-import type { SupabaseJwt } from './types.js'
+import type { CookieArray, SupabaseJwt } from './types.js'
 
 export const handle: Handle = async ({ event, resolve }) => {
   event.locals.supabase = createServerClient(
@@ -15,7 +15,7 @@ export const handle: Handle = async ({ event, resolve }) => {
         getAll: () => event.cookies.getAll(),
         setAll: (cookies) => {
           cookies.forEach(({ name, value, options }) => {
-            event.cookies.set(name, value, { ...options, path: '/' })
+            event.cookies.set(name, value, { ...options, path: '/', httpOnly: true })
           })
         }
       }
@@ -80,8 +80,20 @@ export const handle: Handle = async ({ event, resolve }) => {
 
   const session = await event.locals.getSession()
 
-  if (event.url.pathname === '/session' && event.request.method === 'GET')
-    return new Response(JSON.stringify(session))
+  /* Synthetic endpoint to handle getting and setting cookies from a Supabase browser client. */
+  if (event.url.pathname === '/cookies') {
+    if (event.request.method === 'GET')
+      return new Response(JSON.stringify(event.cookies.getAll()))
+
+    if (event.request.method === 'POST') {
+      const cookies = await event.request.json() as CookieArray
+      const response = new Response()
+      cookies.forEach(({ name, value, options }) => {
+        response.headers.append('set-cookie', serializeCookieHeader(name, value, { ...options, path: '/', httpOnly: true }))
+      })
+      return response
+    }
+  } 
 
   /**
    * Only authenticated users can access these paths and their sub-paths.

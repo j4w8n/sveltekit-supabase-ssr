@@ -6,7 +6,25 @@ export const load = async ({ fetch, data, depends }) => {
 
   const supabase = isBrowser()
     ? createBrowserClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
-        global: { fetch }
+        global: { fetch },
+        cookies: {
+          async getAll() {
+            try {
+              const res = await fetch('/cookies')
+              return await res.json()
+            } catch (err) {
+              console.error(err)
+              return null
+            }
+          },
+          async setAll(cookies) {
+            try {
+              await fetch('/cookies', { method: 'POST', body: JSON.stringify(cookies) })
+            } catch (err) {
+              console.error(err)
+            }
+          }
+        }
       })
     : createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
         global: { fetch },
