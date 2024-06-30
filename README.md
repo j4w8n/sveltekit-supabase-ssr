@@ -6,7 +6,8 @@ Uses SvelteKit, Supabase, and SSR Auth.
 
 - Email sign-up/sign-in.
 - Reset password for email sign-in.
-- Anon sign in.
+- Anonymous sign in.
+- Convert Anonymous user to permanent user.
 - GitHub sign-in. Can easily be changed to other oauth providers.
 - Requires a session to access all pages under the `authenticated` layout group.
 - Add, change, remove custom `nickname` user_metadata on the `/self` page.
@@ -52,6 +53,10 @@ npm install
     - Redirects:
         - `http://localhost:5173/auth/confirm`
         - `http://localhost:5173/auth/callback`
+
+4. If using OAuth or Email/Password features, enable Email and GitHub as providers.
+
+    Login to your Supabase dashbord, then go to your project > Authentication > Providers
 
 ## Run!
 

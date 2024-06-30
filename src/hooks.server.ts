@@ -68,7 +68,8 @@ export const handle: Handle = async ({ event, resolve }) => {
           user_metadata: {
             avatar_url: decoded.user_metadata?.avatar_url,
             nickname: decoded.user_metadata?.nickname
-          }
+          },
+          is_anonymous: decoded.is_anonymous
         }
       }
 
