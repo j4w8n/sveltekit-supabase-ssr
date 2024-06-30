@@ -25,6 +25,17 @@
       <button style="margin-top: 12px;">Change</button>
     </form>
   {/if}
+  {#if session.user.is_anonymous}
+    <form method="POST" action="?/convert_provider">
+      Convert to a permanent user:
+      <button style="margin-top: 12px;" name="provider" value="github">Use GitHub auth</button>
+    </form>
+    <form method="POST" action="?/convert_email">
+      Convert to a permanent user:
+      <input name="email" type="email" placeholder="email">
+      <button style="margin-top: 12px;">Use email auth</button>
+    </form>
+  {/if}
 {/if}
 
 {#if form?.message}

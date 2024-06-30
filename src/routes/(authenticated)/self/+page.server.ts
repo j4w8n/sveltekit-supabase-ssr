@@ -1,4 +1,5 @@
-import { fail } from "@sveltejs/kit"
+import type { Provider } from "@supabase/supabase-js"
+import { fail, redirect } from "@sveltejs/kit"
 
 export const load = async ({ locals: { getSession } }) => {
   /**
@@ -18,6 +19,46 @@ export const load = async ({ locals: { getSession } }) => {
 }
 
 export const actions = {
+  convert_email: async({ request, locals: { supabase } }) => {
+    const formData = await request.formData()
+    const email = formData.get('email') as string
+
+    if (!email) {
+      return fail(400, {
+        error: 'Please provide your email address.'
+      })
+    }
+
+    const { error } = await supabase.auth.updateUser({ email }, { emailRedirectTo: 'http://localhost:5173/self '})
+
+    if (error) {
+      return fail(400, {
+        error
+      })
+    }
+
+    return { message: 'Please check your email to continue.' }
+  },
+  convert_provider: async({ request, locals: { supabase } }) => {
+    const formData = await request.formData()
+    const provider = formData.get('provider') as Provider
+
+    if (!provider) {
+      return fail(400, {
+        error: 'Please pass a provider.'
+      })
+    }
+
+    const { data, error } = await supabase.auth.linkIdentity({ provider })
+
+    if (error) {
+      return fail(400, {
+        error: error.message
+      })
+    }
+
+    if (data.url) redirect(303, data.url)
+  },
   password: async({ request, locals: { supabase } }) => {
     const formData = await request.formData()
     const password = formData.get('password') as string
@@ -34,7 +75,7 @@ export const actions = {
 
     if (error) {
       return fail(400, {
-        error
+        error: error.message
       })
     }
 
