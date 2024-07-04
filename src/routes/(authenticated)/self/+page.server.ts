@@ -1,5 +1,8 @@
 import type { Provider } from "@supabase/supabase-js"
 import { fail, redirect } from "@sveltejs/kit"
+import { PUBLIC_SUPABASE_URL } from '$env/static/public'
+import { SUPABASE_SERVICE_ROLE_KEY } from '$env/static/private'
+import { createClient } from '@supabase/supabase-js'
 
 export const load = async ({ locals: { getSession } }) => {
   /**
@@ -58,6 +61,25 @@ export const actions = {
     }
 
     if (data.url) redirect(303, data.url)
+  },
+  delete_user: async({ request}) => {
+    const formData = await request.formData()
+    const user = formData.get('user') as string
+
+    if (!user) {
+      return fail(400, {
+        error: 'Please enter a user id.'
+      })
+    }
+
+    const supabase = createClient(PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+
+    const { error } = await supabase.auth.admin.deleteUser(user)
+    
+    if (error)
+      return fail(400, { error: error.message })
+
+    return { message: 'User deleted.' }
   },
   password: async({ request, locals: { supabase } }) => {
     const formData = await request.formData()
