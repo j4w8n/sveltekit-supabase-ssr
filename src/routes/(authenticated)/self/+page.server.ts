@@ -52,7 +52,7 @@ export const actions = {
       })
     }
 
-    const { data, error } = await supabase.auth.linkIdentity({ provider })
+    const { data, error } = await supabase.auth.linkIdentity({ provider, options: { redirectTo: 'http:/localhost:5173/self' } })
 
     if (error) {
       return fail(400, {
