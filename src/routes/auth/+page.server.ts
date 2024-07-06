@@ -1,14 +1,6 @@
-import { fail, redirect } from '@sveltejs/kit'
+import { redirect } from '@sveltejs/kit'
 import { type Provider } from '@supabase/supabase-js'
-
-const Fail = (error: { message: string, status?: number, name?: string }, data?: { email?: string }) => {
-  return fail(error.status ?? 400, {
-    error: error.message,
-    data: {
-      email: data?.email
-    }
-  })
-}
+import { Fail } from '$lib/utils.js'
 
 export const load = async ({ locals: { getSession } }) => {
   const session = await getSession()

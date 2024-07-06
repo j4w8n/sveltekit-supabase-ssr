@@ -1,8 +1,9 @@
 import type { Provider } from "@supabase/supabase-js"
-import { fail, redirect } from "@sveltejs/kit"
+import { redirect } from "@sveltejs/kit"
 import { PUBLIC_SUPABASE_URL } from '$env/static/public'
 import { SUPABASE_SERVICE_ROLE_KEY } from '$env/static/private'
 import { createClient } from '@supabase/supabase-js'
+import { Fail } from "$lib/utils.js"
 
 export const load = async ({ locals: { getSession } }) => {
   /**
@@ -27,18 +28,15 @@ export const actions = {
     const email = formData.get('email') as string
 
     if (!email) {
-      return fail(400, {
-        error: 'Please provide your email address.'
+      return Fail({
+        message: 'Please provide your email address.'
       })
     }
 
     const { error } = await supabase.auth.updateUser({ email }, { emailRedirectTo: 'http://localhost:5173/self '})
 
-    if (error) {
-      return fail(400, {
-        error
-      })
-    }
+    if (error)
+      return Fail(error)
 
     return { message: 'Please check your email to continue.' }
   },
@@ -47,18 +45,15 @@ export const actions = {
     const provider = formData.get('provider') as Provider
 
     if (!provider) {
-      return fail(400, {
-        error: 'Please pass a provider.'
+      return Fail({
+        message: 'Please pass a provider.'
       })
     }
 
     const { data, error } = await supabase.auth.linkIdentity({ provider, options: { redirectTo: 'http:/localhost:5173/self' } })
 
-    if (error) {
-      return fail(400, {
-        error: error.message
-      })
-    }
+    if (error)
+      return Fail(error)
 
     if (data.url) redirect(303, data.url)
   },
@@ -67,8 +62,8 @@ export const actions = {
     const user = formData.get('user') as string
 
     if (!user) {
-      return fail(400, {
-        error: 'Please enter a user id.'
+      return Fail({
+        message: 'Please enter a user id.'
       })
     }
 
@@ -77,7 +72,7 @@ export const actions = {
     const { error } = await supabase.auth.admin.deleteUser(user)
     
     if (error)
-      return fail(400, { error: error.message })
+      return Fail(error)
 
     return { message: 'User deleted.' }
   },
@@ -86,8 +81,8 @@ export const actions = {
     const password = formData.get('password') as string
 
     if (!password) {
-      return fail(400, {
-        error: 'Please enter a new password'
+      return Fail({
+        message: 'Please enter a new password'
       })
     }
 
@@ -95,11 +90,8 @@ export const actions = {
       password
     })
 
-    if (error) {
-      return fail(400, {
-        error: error.message
-      })
-    }
+    if (error)
+      return Fail(error)
 
     return { message: 'Password updated!' }
   },
@@ -108,10 +100,10 @@ export const actions = {
     const nickname = formData.get('nickname') as string
 
     if (!nickname) {
-      return fail(400, {
-        error: 'Please enter a nickname.',
-        data: { nickname: '' }
-      })
+      return Fail(
+        { message: 'Please enter a nickname.' },
+        { nickname: '' }
+      )
     }
 
     const { error } = await supabase.auth.updateUser({
@@ -119,10 +111,7 @@ export const actions = {
     })
 
     if (error)
-      return fail(error.status ?? 400, {
-        error: error.message,
-        data: { nickname }
-      })
+      return Fail(error, { nickname })
 
     /* Refresh tokens, so we can display the new nickname. */
     await supabase.auth.refreshSession()
@@ -133,10 +122,7 @@ export const actions = {
     })
 
     if (error)
-      return fail(error.status ?? 400, {
-        error: error.message,
-        data: { nickname: '' }
-      })
+      return Fail(error, { nickname: '' })
 
     /* Refresh tokens, so we can display the new nickname. */
     await supabase.auth.refreshSession()
