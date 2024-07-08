@@ -11,6 +11,7 @@ Uses SvelteKit, Supabase, and SSR Auth.
 - GitHub sign-in. Can easily be changed to other oauth providers.
 - Requires a session to access all pages under the `authenticated` layout group.
 - Add, change, remove custom `nickname` user_metadata on the `/self` page.
+- Delete a user on the `/self` page, for your convenience when playing around with the demo.
 
 > All sign-up and sign-ins happen server-side.
 
@@ -36,6 +37,7 @@ npm install
     PUBLIC_SUPABASE_ANON_KEY=<your-project-anon-key>
     PUBLIC_SUPABASE_URL=https://<your-project-id>.supabase.co
     JWT_SECRET=<your-project-jwt-secret>
+    SUPABASE_SERVICE_ROLE_KEY=<your-project-service-role-key>
     ```
 
 2. If using the demo's signup, magiclink, or reset password features, change your email template links per the below. You can find these settings in your Supabase project's dashboard at Authentication > Email Templates.
