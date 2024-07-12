@@ -57,6 +57,17 @@ export const actions = {
 
     if (data.url) redirect(303, data.url)
   },
+  delete_nickname: async ({ locals: { supabase } }) => {
+    const { error } = await supabase.auth.updateUser({
+      data: { nickname: null }
+    })
+
+    if (error)
+      return Fail(error, { nickname: '' })
+
+    /* Refresh tokens, so we can display the new nickname. */
+    await supabase.auth.refreshSession()
+  },
   delete_user: async({ request}) => {
     const formData = await request.formData()
     const user = formData.get('user') as string
@@ -76,26 +87,7 @@ export const actions = {
 
     return { message: 'User deleted.' }
   },
-  password: async({ request, locals: { supabase } }) => {
-    const formData = await request.formData()
-    const password = formData.get('password') as string
-
-    if (!password) {
-      return Fail({
-        message: 'Please enter a new password'
-      })
-    }
-
-    const { error } = await supabase.auth.updateUser({
-      password
-    })
-
-    if (error)
-      return Fail(error)
-
-    return { message: 'Password updated!' }
-  },
-  update: async ({ request, locals: { supabase } }) => {
+  update_nickname: async ({ request, locals: { supabase } }) => {
     const formData = await request.formData()
     const nickname = formData.get('nickname') as string
 
@@ -116,15 +108,65 @@ export const actions = {
     /* Refresh tokens, so we can display the new nickname. */
     await supabase.auth.refreshSession()
   },
-  delete: async ({ locals: { supabase } }) => {
+  update_password: async({ request, locals: { supabase } }) => {
+    const formData = await request.formData()
+    const password = formData.get('password') as string
+
+    if (!password) {
+      return Fail({
+        message: 'Please enter a new password'
+      })
+    }
+
     const { error } = await supabase.auth.updateUser({
-      data: { nickname: null }
+      password
     })
 
     if (error)
-      return Fail(error, { nickname: '' })
+      return Fail(error)
 
-    /* Refresh tokens, so we can display the new nickname. */
-    await supabase.auth.refreshSession()
+    return { message: 'Password updated!' }
+  },
+  update_phone: async ({ request, locals: { supabase } }) => {
+    const formData = await request.formData()
+    const phone = formData.get('phone') as string
+
+    if (!phone) {
+      return Fail(
+        { message: 'Please enter a phone.' }
+      )
+    }
+
+    /* Sends an OTP to phone number. */
+    const { error } = await supabase.auth.updateUser({
+      phone
+    })
+
+    if (error)
+      return Fail({ message: error.message })
+
+    return { message: 'Please check your phone for the code.' , verify: true, phone }
+  },
+  verify_otp: async ({ request, locals: { supabase } }) => {
+    const formData = await request.formData()
+    const otp = formData.get('otp') as string
+    const phone = formData.get('phone') as string
+
+    if (!otp) {
+      return Fail(
+        { message: 'Please enter an otp.', verify: true, phone }
+      )
+    }
+
+    const { error } = await supabase.auth.verifyOtp({
+      phone,
+      type: 'phone_change',
+      token: otp
+    })
+
+    if (error)
+      return Fail({ message: error.message, verify: true, phone })
+
+    return { message: 'Your phone number has been changed.' , verify: false }
   }
 }
