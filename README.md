@@ -5,12 +5,14 @@ Uses SvelteKit, Supabase, and SSR Auth.
 ## Code Showcase
 
 - Email sign-up/sign-in.
+- Phone OTP sign-in.
 - Reset password for email sign-in.
 - Anonymous sign in.
 - Convert Anonymous user to permanent user.
 - GitHub sign-in. Can easily be changed to other oauth providers.
 - Requires a session to access all pages under the `authenticated` layout group.
 - Add, change, remove custom `nickname` user_metadata on the `/self` page.
+- Add or change a user's phone number.
 - Delete a user on the `/self` page, for your convenience when playing around with the demo.
 
 > All sign-up and sign-ins happen server-side.
@@ -40,14 +42,16 @@ npm install
     SUPABASE_SERVICE_ROLE_KEY=<your-project-service-role-key>
     ```
 
-2. If using the demo's signup, magiclink, or reset password features, change your email template links per the below. You can find these settings in your Supabase project's dashboard at Authentication > Email Templates.
+2. If using the signup, magiclink, or reset password features, change your email template links per the below. You can find these settings in your Supabase project's dashboard at Authentication > Email Templates.
 
     All use this: `href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email"`, and then there are some additions for magic link and reset:
 
     - Magic Link: add `&next=/app` at the end of the above href.
-    - Reset Password: add `&next=/self` at the end of the above href. 
+    - Reset Password: add `&next=/self` at the end of the above href.
 
-3. Site URL and Redirect URLs
+3. If using the phone OTP login, you must setup an SMS provider. You can use Twilio Verify and get a $15 credit.
+
+4. Site URL and Redirect URLs
 
     Login to your Supabase dashboard, then go to your project > Authentication > URL Configuration, and add these:
     - Site:
@@ -56,7 +60,7 @@ npm install
         - `http://localhost:5173/auth/confirm`
         - `http://localhost:5173/auth/callback`
 
-4. If using OAuth or Email/Password features, enable Email and GitHub as providers.
+5. If using OAuth or Email/Password features, enable Email and GitHub as providers.
 
     Login to your Supabase dashbord, then go to your project > Authentication > Providers
 
