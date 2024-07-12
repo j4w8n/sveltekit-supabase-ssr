@@ -20,11 +20,11 @@
     <input name="user" type="text">
     <button style="margin-top: 12px;">Delete</button>
   </form>
-  <form method="POST" action="?/update">
+  <form method="POST" action="?/update_nickname">
     Change your nickname:
     <input name="nickname" type="text" value={ form?.data?.nickname ?? ""}>
     <button style="margin-top: 12px;">Update</button>
-    <button formaction="?/delete" style="margin-top: 12px;">Delete</button>
+    <button formaction="?/delete_nickname" style="margin-top: 12px;">Delete</button>
   </form>
   <form method="POST" action="?/update_phone">
     Change your phone number:
@@ -32,7 +32,7 @@
     <button style="margin-top: 12px;">Update</button>
   </form>
   {#if provider === 'email'}
-    <form method="POST" action="?/password">
+    <form method="POST" action="?/update_password">
       Change your password:
       <input name="password" type="password">
       <button style="margin-top: 12px;">Change</button>
