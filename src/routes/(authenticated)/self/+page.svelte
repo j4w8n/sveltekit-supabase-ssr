@@ -59,7 +59,7 @@
 {/if}
 {#if form?.verify}
   <form method="POST" action="?/verify_otp">
-    <input name="otp" type="text">
+    <input name="otp" placeholder={`OTP sent to ${form?.phone}`} type="text">
     <input name="phone" type="hidden" value={form?.phone}>
     <button style="margin-top: 12px;">Verify</button>
   </form>

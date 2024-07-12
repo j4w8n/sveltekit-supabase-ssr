@@ -133,7 +133,7 @@ export const actions = {
 
     if (!phone) {
       return Fail(
-        { message: 'Please enter a phone.' }
+        { message: 'Please enter a phone number.' }
       )
     }
 
@@ -145,7 +145,7 @@ export const actions = {
     if (error)
       return Fail({ message: error.message })
 
-    return { message: 'Please check your phone for the code.' , verify: true, phone }
+    return { message: 'Please check your phone for the OTP code and enter it below.' , verify: true, phone }
   },
   verify_otp: async ({ request, locals: { supabase } }) => {
     const formData = await request.formData()
@@ -154,7 +154,7 @@ export const actions = {
 
     if (!otp) {
       return Fail(
-        { message: 'Please enter an otp.', verify: true, phone }
+        { message: 'Please enter an OTP.', verify: true, phone }
       )
     }
 
