@@ -70,7 +70,7 @@ export const actions = {
     if (error)
       return Fail({ message: error.message, phone })
 
-    return { message: 'Please check your phone for the code.' , verify: true, phone }
+    return { message: 'Please check your phone for the OTP code and enter it below.' , verify: true, phone }
 
   },
   oauth: async ({ request, url, locals: { supabase }}) => {
