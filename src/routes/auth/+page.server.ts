@@ -31,7 +31,7 @@ export const actions = {
     else
       return { message: 'Please check your email to confirm your signup.' }
   },
-  signin: async ({ request, locals: { supabase } }) => {
+  signin_email: async ({ request, locals: { supabase } }) => {
     const formData = await request.formData()
     const email = formData.get('email') as string
     const password = formData.get('password') as string
@@ -52,6 +52,26 @@ export const actions = {
 
     /* Login successful, redirect. */
     redirect(303, '/app')
+  },
+  signin_otp: async ({ request, locals: { supabase }}) => {
+    const formData = await request.formData()
+    const phone = formData.get('phone') as string
+
+    if (!phone) {
+      return Fail(
+        { message: 'Please enter a phone number.' }
+      )
+    }
+
+    const { error } = await supabase.auth.signInWithOtp({
+      phone,
+    })
+
+    if (error)
+      return Fail({ message: error.message, phone })
+
+    return { message: 'Please check your phone for the code.' , verify: true, phone }
+
   },
   oauth: async ({ request, url, locals: { supabase }}) => {
     const formData = await request.formData()
@@ -116,5 +136,26 @@ export const actions = {
   signout: async ({ locals: { supabase } }) => {
     await supabase.auth.signOut()
     redirect(303, '/')
+  },
+  verify_otp: async ({ request, locals: { supabase } }) => {
+    const formData = await request.formData()
+    const otp = formData.get('otp') as string
+    const phone = formData.get('phone') as string
+
+    if (!otp) {
+      return Fail(
+        { message: 'Please enter an OTP.', verify: true, phone }
+      )
+    }
+
+    const { error } = await supabase.auth.verifyOtp({
+      phone,
+      type: 'sms',
+      token: otp,
+      options: { redirectTo: 'http://localhost:5173/app' }
+    })
+
+    if (error)
+      return Fail({ message: error.message, verify: true, phone })
   }
 }
