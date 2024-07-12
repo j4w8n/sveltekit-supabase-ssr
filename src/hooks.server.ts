@@ -45,9 +45,15 @@ export const handle: Handle = async ({ event, resolve }) => {
        * Create a validated session.
        * 
        * Most of these properties are required for functionality or typing.
-       * Add any data needed for your layouts or pages. In this example,
-       * the only properties which aren't required are `user.user_metadata.avatar_url & .nickname`,
-       * otherwise we'd just need to leave `user.user_metadata` as an empty object.
+       * Add any data needed for your layouts or pages.
+       * 
+       * Here are the properties which aren't required:
+       * `user.user_metadata.avatar_url`
+       * `user.user_metadata.nickname`
+       * `user.email`
+       * `user.phone`
+       * 
+       * If not used, `user.user_metadata` should be an empty object.
        * 
        * If possible, avoid using anything from `session.user` to populate these,
        * especially unique user data like `id`, an email address, or any other
@@ -64,6 +70,8 @@ export const handle: Handle = async ({ event, resolve }) => {
           aud: 'authenticated',
           created_at: '',
           id: decoded.sub,
+          email: decoded.email,
+          phone: decoded.phone,
           user_metadata: {
             avatar_url: decoded.user_metadata?.avatar_url,
             nickname: decoded.user_metadata?.nickname

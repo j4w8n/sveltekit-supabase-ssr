@@ -10,10 +10,13 @@
 
 {#if session}
   <h2>Welcome to /self!</h2>
-  <h4>Your id is {session.user.id}</h4>
-  <h4>Your nickname is {session.user.user_metadata.nickname ?? "not set"}</h4>
+  <h3>User Information:</h3>
+  <p style="margin-left: 10px;">ID: {session.user.id}</p>
+  <p style="margin-left: 10px;">Email: {session.user.email || "not set"}</p>
+  <p style="margin-left: 10px;">Phone Number: {session.user.phone || "not set"}</p>
+  <p style="margin-left: 10px;">Nickname: {session.user.user_metadata.nickname || "not set"}</p>
   <form method="POST" action="?/delete_user">
-    Delete a user:
+    Delete a user by ID:
     <input name="user" type="text">
     <button style="margin-top: 12px;">Delete</button>
   </form>
