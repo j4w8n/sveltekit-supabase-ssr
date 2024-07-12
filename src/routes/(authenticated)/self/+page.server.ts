@@ -126,5 +126,47 @@ export const actions = {
 
     /* Refresh tokens, so we can display the new nickname. */
     await supabase.auth.refreshSession()
+  },
+  update_phone: async ({ request, locals: { supabase } }) => {
+    const formData = await request.formData()
+    const phone = formData.get('phone') as string
+
+    if (!phone) {
+      return Fail(
+        { message: 'Please enter a phone.' }
+      )
+    }
+
+    /* Sends an OTP to phone number. */
+    const { error } = await supabase.auth.updateUser({
+      phone
+    })
+
+    if (error)
+      return Fail({ message: error.message })
+
+    return { message: 'Please check your phone for the code.' , verify: true, phone }
+  },
+  verify_otp: async ({ request, locals: { supabase } }) => {
+    const formData = await request.formData()
+    const otp = formData.get('otp') as string
+    const phone = formData.get('phone') as string
+
+    if (!otp) {
+      return Fail(
+        { message: 'Please enter an otp.', verify: true, phone }
+      )
+    }
+
+    const { error } = await supabase.auth.verifyOtp({
+      phone,
+      type: 'phone_change',
+      token: otp
+    })
+
+    if (error)
+      return Fail({ message: error.message, verify: true, phone })
+
+    return { message: 'Your phone number has been changed.' , verify: false }
   }
 }

@@ -23,6 +23,11 @@
     <button style="margin-top: 12px;">Update</button>
     <button formaction="?/delete" style="margin-top: 12px;">Delete</button>
   </form>
+  <form method="POST" action="?/update_phone">
+    Change your phone number:
+    <input name="phone" type="text">
+    <button style="margin-top: 12px;">Update</button>
+  </form>
   {#if provider === 'email'}
     <form method="POST" action="?/password">
       Change your password:
@@ -48,4 +53,11 @@
 {/if}
 {#if form?.error}
   <p style="color: red;">{form.error}</p>
+{/if}
+{#if form?.verify}
+  <form method="POST" action="?/verify_otp">
+    <input name="otp" type="text">
+    <input name="phone" type="hidden" value={form?.phone}>
+    <button style="margin-top: 12px;">Verify</button>
+  </form>
 {/if}
