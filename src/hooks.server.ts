@@ -2,7 +2,7 @@ import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/publi
 import { createServerClient } from '@supabase/ssr'
 import { redirect, type Handle } from '@sveltejs/kit'
 import { JWT_SECRET } from '$env/static/private'
-import jwt from 'jsonwebtoken'
+import * as jose from 'jose'
 import type { Session } from '@supabase/supabase-js'
 import type { SupabaseJwt } from './types.js'
 
@@ -39,7 +39,7 @@ export const handle: Handle = async ({ event, resolve }) => {
      * is to create a validated session; which we do below. 
      */
     try {
-      const decoded = jwt.verify(session.access_token, JWT_SECRET) as SupabaseJwt
+      const { payload: decoded }: { payload: SupabaseJwt } = await jose.jwtVerify(session.access_token, new TextEncoder().encode(JWT_SECRET))
 
       /**
        * Create a validated session.

@@ -24,6 +24,6 @@
   "dependencies": {
     "@supabase/ssr": "^0.4.1",
     "@supabase/supabase-js": "^2.44.4",
-    "jsonwebtoken": "^9.0.2"
+    "jose": "^5.6.3"
   }
 }
