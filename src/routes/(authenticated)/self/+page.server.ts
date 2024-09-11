@@ -13,7 +13,7 @@ export const load = async ({ locals: { getSession } }) => {
    * If you have a one-off situation, or you'd rather be
    * more explicit, check for a session and redirect.
    * 
-   * import { redirect } from '@sveltejs/kit' // Would be added in with the `fail` import above.
+   * import { redirect } from '@sveltejs/kit' // Would be added in with the `redirect` import above.
    * if (!session) redirect(307, '/auth') // Would be added after the `const session...` below.
    */
 
