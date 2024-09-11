@@ -26,14 +26,15 @@ export const actions = {
   convert_email: async({ request, locals: { supabase } }) => {
     const formData = await request.formData()
     const email = formData.get('email') as string
+    const password = formData.get('password') as string
 
-    if (!email) {
+    if (!email || !password) {
       return Fail({
-        message: 'Please provide your email address.'
+        message: 'Please provide your email address and a password.'
       })
     }
 
-    const { error } = await supabase.auth.updateUser({ email }, { emailRedirectTo: 'http://localhost:5173/self '})
+    const { error } = await supabase.auth.updateUser({ email, password }, { emailRedirectTo: 'http://localhost:5173/self'})
 
     if (error)
       return Fail(error)

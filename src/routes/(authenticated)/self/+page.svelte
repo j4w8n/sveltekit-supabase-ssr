@@ -46,6 +46,7 @@
     <form method="POST" action="?/convert_email">
       Convert to a permanent user:
       <input name="email" type="email" placeholder="email">
+      <input name="password" type="password" placeholder="password">
       <button style="margin-top: 12px;">Use email auth</button>
     </form>
   {/if}
