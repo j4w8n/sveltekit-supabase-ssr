@@ -1,13 +1,7 @@
 <script lang="ts">
-  import { run } from "svelte/legacy";
-
   let { data, form } = $props();
 
   let { session } = $state(data);
-  run(() => {
-    ({ session } = data);
-  });
-
   const provider = session?.user.app_metadata.provider;
 </script>
 

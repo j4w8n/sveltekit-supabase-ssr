@@ -1,15 +1,9 @@
 <script lang="ts">
-  import { run } from 'svelte/legacy';
-
   import { invalidate } from '$app/navigation'
   import { onMount } from 'svelte'
 
   let { data, children } = $props();
-
   let { supabase, session } = $state(data)
-  run(() => {
-    ({ supabase, session } = data)
-  });
 
   onMount(() => {
     const {
