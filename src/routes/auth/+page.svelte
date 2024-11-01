@@ -1,5 +1,5 @@
 <script lang="ts">
-  export let form
+  let { form } = $props();
 </script>
 
 <form method="POST" action="?/signin_email">
