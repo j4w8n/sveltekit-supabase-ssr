@@ -1,5 +1,5 @@
 <script lang="ts">
-	let { children } = $props();
+	let { children } = $props()
 </script>
 
 <h1>You're inside the auth-protected (authenticated) layout group!</h1>

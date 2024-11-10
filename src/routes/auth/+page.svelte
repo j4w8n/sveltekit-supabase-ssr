@@ -1,5 +1,5 @@
 <script lang="ts">
-  let { form } = $props();
+  let { form } = $props()
 </script>
 
 <form method="POST" action="?/signin_email">

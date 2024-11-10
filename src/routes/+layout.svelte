@@ -2,7 +2,7 @@
   import { invalidate } from '$app/navigation'
   import { onMount } from 'svelte'
 
-  let { data, children } = $props();
+  let { data, children } = $props()
   let { supabase, session } = $state(data)
 
   onMount(() => {
