@@ -34,7 +34,7 @@ npm install
 
 1. Environment variables.
     
-    Create a `.env.local` file in your project's root directory, adding the below. The values can be found in your Supabase project's dashboard at Project Settings > API. !!! Never expose your `JWT_SECRET` on the client side !!!
+    Rename the `.env.example` file to `.env.local` in your project's root directory and assign values, which can be found in your Supabase project's dashboard at Project Settings > API. !!! Never expose your `JWT_SECRET` on the client side !!!
     ```
     PUBLIC_SUPABASE_ANON_KEY=<your-project-anon-key>
     PUBLIC_SUPABASE_URL=https://<your-project-id>.supabase.co
