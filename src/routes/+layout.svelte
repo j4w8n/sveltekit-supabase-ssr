@@ -2,10 +2,8 @@
   import { invalidate } from '$app/navigation'
   import { onMount } from 'svelte'
 
-  export let data
-
-  let { supabase, session } = data
-  $: ({ supabase, session } = data)
+  let { data, children } = $props()
+  let { supabase, session } = $state(data)
 
   onMount(() => {
     const {
@@ -34,4 +32,4 @@
   {/if}
 </nav>
 
-<slot />
+{@render children?.()}

@@ -1,10 +1,7 @@
 <script lang="ts">
-  export let data
-  export let form
+  let { data, form } = $props()
 
-  let { session } = data
-  $: ({ session } = data)
-
+  let { session } = $state(data)
   const provider = session?.user.app_metadata.provider
 </script>
 
@@ -22,7 +19,7 @@
   </form>
   <form method="POST" action="?/update_nickname">
     Change your nickname:
-    <input name="nickname" type="text" value={ form?.data?.nickname ?? ""}>
+    <input name="nickname" type="text" value={form?.data?.nickname ?? ""}>
     <button style="margin-top: 12px;">Update</button>
     <button formaction="?/delete_nickname" style="margin-top: 12px;">Delete</button>
   </form>
@@ -31,7 +28,7 @@
     <input name="phone" type="text">
     <button style="margin-top: 12px;">Update</button>
   </form>
-  {#if provider === 'email'}
+  {#if provider === "email"}
     <form method="POST" action="?/update_password">
       Change your password:
       <input name="password" type="password">
