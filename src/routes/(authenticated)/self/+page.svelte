@@ -2,7 +2,10 @@
   let { data, form } = $props()
 
   let { session } = $state(data)
-  const provider = session?.user.app_metadata.provider
+  const providers = session?.user.app_metadata.providers
+  const has_email_provider = providers 
+    ? providers.some((p: string) => p === 'email') 
+    : session?.user.app_metadata.provider === 'email'
 </script>
 
 {#if session}
@@ -28,7 +31,7 @@
     <input name="phone" type="text">
     <button style="margin-top: 12px;">Update</button>
   </form>
-  {#if provider === "email"}
+  {#if has_email_provider}
     <form method="POST" action="?/update_password">
       Change your password:
       <input name="password" type="password">
