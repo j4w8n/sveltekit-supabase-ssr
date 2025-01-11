@@ -26,20 +26,19 @@ export const actions = {
   convert_email: async({ request, locals: { supabase } }) => {
     const formData = await request.formData()
     const email = formData.get('email') as string
-    const password = formData.get('password') as string
 
-    if (!email || !password) {
+    if (!email) {
       return Fail({
-        message: 'Please provide your email address and a password.'
+        message: 'Please provide your email address.'
       })
     }
 
-    const { error } = await supabase.auth.updateUser({ email, password }, { emailRedirectTo: 'http://localhost:5173/self'})
+    const { error } = await supabase.auth.updateUser({ email }, { emailRedirectTo: 'http://localhost:5173/self' })
 
     if (error)
       return Fail(error)
 
-    return { message: 'Please check your email to continue.' }
+    return { message: 'Please check your email for the OTP code and enter it below.' , verify: true, email }
   },
   convert_provider: async({ request, locals: { supabase } }) => {
     const formData = await request.formData()
