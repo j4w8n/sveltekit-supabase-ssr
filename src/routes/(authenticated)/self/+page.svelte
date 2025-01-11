@@ -3,6 +3,7 @@
 
   let { session } = $state(data)
   const providers = session?.user.app_metadata.providers
+  console.log(providers)
   const has_email_provider = providers 
     ? providers.some((p: string) => p === 'email') 
     : session?.user.app_metadata.provider === 'email'
@@ -46,7 +47,6 @@
     <form method="POST" action="?/convert_email">
       Convert to a permanent user:
       <input name="email" type="email" placeholder="email">
-      <input name="password" type="password" placeholder="password">
       <button style="margin-top: 12px;">Use email auth</button>
     </form>
   {/if}
@@ -59,9 +59,13 @@
   <p style="color: red;">{form.error}</p>
 {/if}
 {#if form?.verify}
-  <form method="POST" action="?/verify_otp">
-    <input name="otp" placeholder={`OTP sent to ${form?.phone}`} type="text">
-    <input name="phone" type="hidden" value={form?.phone}>
+  <form method="POST" action="?/verify_otp" style="display: flex; flex-direction: column; width: 25%">
+    <input name="otp" width="200" placeholder={`OTP sent to ${form?.phone ?? form?.email}`} type="text">
+    {#if form?.password_prompt}
+    <input name="password" placeholder="Enter new password" type="password">
+    {/if}
+    {#if form?.phone}<input name="phone" type="hidden" value={form.phone}>{/if}
+    {#if form?.email}<input name="email" type="hidden" value={form.email}>{/if}
     <button style="margin-top: 12px;">Verify</button>
   </form>
 {/if}

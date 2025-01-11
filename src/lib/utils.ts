@@ -2,9 +2,11 @@ import { fail } from "@sveltejs/kit"
 
 export const Fail = (
   error: { 
+    email?: string;
     message: string; 
     status?: number; 
     name?: string;
+    password_prompt?: boolean;
     phone?: string;
     verify?: boolean;
   }, 
