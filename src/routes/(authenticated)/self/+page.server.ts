@@ -38,7 +38,12 @@ export const actions = {
     if (error)
       return Fail(error)
 
-    return { message: 'Please check your email for the OTP code and enter it below.' , verify: true, email }
+    return { 
+      message: 'Please check your email for the OTP code and enter it below, along with your new password.' , 
+      verify: true, 
+      password_prompt: true, 
+      email 
+    }
   },
   convert_provider: async({ request, locals: { supabase } }) => {
     const formData = await request.formData()
@@ -148,25 +153,50 @@ export const actions = {
     return { message: 'Please check your phone for the OTP code and enter it below.' , verify: true, phone }
   },
   verify_otp: async ({ request, locals: { supabase } }) => {
+    /**
+     * This action is used to update a phone number or 
+     * update an email address when converting an anonymous user.
+     */
     const formData = await request.formData()
     const otp = formData.get('otp') as string
     const phone = formData.get('phone') as string
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
 
     if (!otp) {
       return Fail(
-        { message: 'Please enter an OTP.', verify: true, phone }
+        { message: 'Please enter an OTP.', verify: true, phone, email, password_prompt: password ? false : true }
       )
     }
 
-    const { error } = await supabase.auth.verifyOtp({
-      phone,
-      type: 'phone_change',
-      token: otp
-    })
+    if (phone) {
+      const { error } = await supabase.auth.verifyOtp({
+        phone,
+        type: 'phone_change',
+        token: otp
+      })
 
-    if (error)
-      return Fail({ message: error.message, verify: true, phone })
+      if (error)
+        return Fail({ message: error.message, verify: true, phone })
 
-    return { message: 'Your phone number has been changed.' , verify: false }
+    } else if (email) {
+      const { error } = await supabase.auth.verifyOtp({
+        email,
+        type: 'email_change',
+        token: otp
+      })
+
+      if (error)
+        return Fail({ message: error.message, verify: true, email, password_prompt: true })
+
+      const { error: updateError } = await supabase.auth.updateUser({
+        password
+      })
+
+      if (updateError)
+        return Fail({ message: updateError.message, verify: true, email, password_prompt: true })
+    }
+
+    return { message: 'Success!' , verify: false, password_prompt: false }
   }
 }
