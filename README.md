@@ -12,10 +12,10 @@ Uses SvelteKit, Supabase, and SSR Auth.
 - GitHub sign-in. Can easily be changed to other oauth providers.
 - Requires a session to access all pages under the `authenticated` layout group.
 - Add, change, remove custom `nickname` user_metadata on the `/self` page.
-- Add or change a user's phone number.
-- Delete a user on the `/self` page, for your convenience when playing around with the demo.
+- Add or change a user's phone number on the `/self` page.
+- Delete a user on the `/self` page - if needed, when playing around with the demo.
 
-> All sign-up and sign-ins happen server-side.
+> All actions happen server-side.
 
 ## Prerequisites
 
@@ -34,7 +34,7 @@ npm install
 
 1. Environment variables.
     
-    Rename the `.env.example` file to `.env.local` in your project's root directory and assign values, which can be found in your Supabase project's dashboard at Project Settings > API. !!! Never expose your `JWT_SECRET` on the client side !!!
+    Rename the `.env.example` file to `.env.local` in your project's root directory and assign values. They can be found in your Supabase project's dashboard at Project Settings > Data API. !!! Never expose your `JWT_SECRET` on the client side !!!
     ```
     PUBLIC_SUPABASE_ANON_KEY=<your-project-anon-key>
     PUBLIC_SUPABASE_URL=https://<your-project-id>.supabase.co
@@ -42,27 +42,24 @@ npm install
     SUPABASE_SERVICE_ROLE_KEY=<your-project-service-role-key>
     ```
 
-2. If using the signup, magiclink, or reset password features, change your email template links per the below. You can find these settings in your Supabase project's dashboard at Authentication > Email Templates.
+2. If using the signup, magiclink, or reset password features, change their email template anchor links per the below. In your Supabase project's dashboard, go to Authentication > Emails.
 
-    All use this: `href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email"`, and then there are some additions for magic link and reset:
+    All need this: `href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email"`, which should replace the `{{ .ConfirmationURL }}`, and then there are some additions for magic link and reset:
 
     - Magic Link: add `&next=/app` at the end of the above href.
     - Reset Password: add `&next=/self` at the end of the above href.
 
-3. If using the phone OTP login, you must setup an SMS provider. You can use Twilio Verify and get a $15 credit.
-
-4. Site URL and Redirect URLs
-
-    Login to your Supabase dashboard, then go to your project > Authentication > URL Configuration, and add these:
+3. Site URL and Redirect URLs. In your Supabase project's dashboard, go to Authentication > URL Configuration, and change them to reflect the below.
     - Site:
         - `http://localhost:5173`
     - Redirects:
         - `http://localhost:5173/auth/confirm`
         - `http://localhost:5173/auth/callback`
 
-5. If using OAuth or Email/Password features, enable Email and GitHub as providers.
-
-    Login to your Supabase dashbord, then go to your project > Authentication > Providers
+4. User and provider settings. In your Supabase project's dashbord, go to Authentication > Sign In / Up
+    - Under "User Signups", ensure that all three settings are enabled.
+    - Under "Auth Providers", enable and configure the relevant ones for you.
+        - If using the phone OTP login, you must setup an SMS provider. You can use Twilio Verify and get a $15 credit.
 
 ## Run!
 
@@ -74,10 +71,10 @@ Open a browser to http://localhost:5173
 
 ## Security
 
-Within the `(authenticated)` layout group, we have a `+page.server.ts` file for each route. This ensures that even during client navigation we can verify there's still a session before rendering the page.
+Within the `(authenticated)` layout group, we have a `+page.server.ts` file for each route. This ensures that even during client navigation the `hooks.server.ts` file is run so that we can verify there's still a session before rendering the page.
 
 We check for and fully validate the session by calling `event.locals.getSession()`. Inside that function, we verify the `access_token`, aka JWT, and use it's decoded contents to help create a validated session for use on the server-side.
 
 Full validation is important because sessions are stored in a cookie sent from a client. The client could be an attacker with just enough information to bypass checks within `supabase.auth.getSession()` and possibly render data for a victim user. See [this discussion](https://github.com/orgs/supabase/discussions/23224) for details.
 
-!!! Simply verifying the JWT does not validate the `session.user` object, for using it's info to render sensitive user data on the server-side. See discussion link above. !!!
+!!! Just verifying the JWT does not validate other information within getSession's `session.user` object; this is a big reason why we do the "full validation" by replacing its contents using info from the verified and decoded JWT. See discussion link above. !!!
