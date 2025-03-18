@@ -1,6 +1,6 @@
 import { getRequestEvent } from "$app/server" 
 
-export const getFormData = async <T = string>(...items: string[]): Promise<{ [key: string]: T }> => {
+export const getFormData = async <T = string, K extends string = string>(...items: K[]): Promise<{ [key in K]: T }> => {
   const { request } = getRequestEvent()
   const data = await request.formData()
   const result: { [key: string]: T } = {}
@@ -9,5 +9,5 @@ export const getFormData = async <T = string>(...items: string[]): Promise<{ [ke
     result[i] = data.get(i) as T
   }
 
-  return result
+  return result as { [key in K]: T }
 }
