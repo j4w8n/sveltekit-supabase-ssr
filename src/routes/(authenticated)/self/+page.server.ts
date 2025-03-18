@@ -4,6 +4,7 @@ import { PUBLIC_SUPABASE_URL } from '$env/static/public'
 import { SUPABASE_SERVICE_ROLE_KEY } from '$env/static/private'
 import { createClient } from '@supabase/supabase-js'
 import { Fail } from "$lib/utils.js"
+import { getFormData } from "$lib/server/event.js"
 
 export const load = async ({ locals: { getSession } }) => {
   /**
@@ -23,9 +24,8 @@ export const load = async ({ locals: { getSession } }) => {
 }
 
 export const actions = {
-  convert_email: async({ request, locals: { supabase } }) => {
-    const formData = await request.formData()
-    const email = formData.get('email') as string
+  convert_email: async({ locals: { supabase } }) => {
+    const { email } = await getFormData('email')
 
     if (!email) {
       return Fail({
@@ -45,9 +45,8 @@ export const actions = {
       email 
     }
   },
-  convert_provider: async({ request, locals: { supabase } }) => {
-    const formData = await request.formData()
-    const provider = formData.get('provider') as Provider
+  convert_provider: async({ locals: { supabase } }) => {
+    const { provider } = await getFormData<Provider>('provider')
 
     if (!provider) {
       return Fail({
@@ -73,9 +72,8 @@ export const actions = {
     /* Refresh tokens, so we can display the new nickname. */
     await supabase.auth.refreshSession()
   },
-  delete_user: async({ request}) => {
-    const formData = await request.formData()
-    const user = formData.get('user') as string
+  delete_user: async() => {
+    const { user } = await getFormData('user')
 
     if (!user) {
       return Fail({
@@ -92,9 +90,8 @@ export const actions = {
 
     return { message: 'User deleted.' }
   },
-  update_nickname: async ({ request, locals: { supabase } }) => {
-    const formData = await request.formData()
-    const nickname = formData.get('nickname') as string
+  update_nickname: async ({ locals: { supabase } }) => {
+    const { nickname } = await getFormData('nickname')
 
     if (!nickname) {
       return Fail(
@@ -113,9 +110,8 @@ export const actions = {
     /* Refresh tokens, so we can display the new nickname. */
     await supabase.auth.refreshSession()
   },
-  update_password: async({ request, locals: { supabase } }) => {
-    const formData = await request.formData()
-    const password = formData.get('password') as string
+  update_password: async({ locals: { supabase } }) => {
+    const { password } = await getFormData('password')
 
     if (!password) {
       return Fail({
@@ -132,9 +128,8 @@ export const actions = {
 
     return { message: 'Password updated!' }
   },
-  update_phone: async ({ request, locals: { supabase } }) => {
-    const formData = await request.formData()
-    const phone = formData.get('phone') as string
+  update_phone: async ({ locals: { supabase } }) => {
+    const { phone } = await getFormData('phone')
 
     if (!phone) {
       return Fail(
@@ -152,16 +147,12 @@ export const actions = {
 
     return { message: 'Please check your phone for the OTP code and enter it below.' , verify: true, phone }
   },
-  verify_otp: async ({ request, locals: { supabase } }) => {
+  verify_otp: async ({ locals: { supabase } }) => {
     /**
      * This action is used to update a phone number or 
      * update an email address when converting an anonymous user.
      */
-    const formData = await request.formData()
-    const otp = formData.get('otp') as string
-    const phone = formData.get('phone') as string
-    const email = formData.get('email') as string
-    const password = formData.get('password') as string
+    const { otp, phone, email, password } = await getFormData('otp', 'phone', 'email', 'password')
 
     if (!otp) {
       return Fail(

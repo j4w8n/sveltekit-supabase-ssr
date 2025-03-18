@@ -1,6 +1,7 @@
 import { redirect } from '@sveltejs/kit'
 import { type Provider } from '@supabase/supabase-js'
 import { Fail } from '$lib/utils.js'
+import { getFormData } from '$lib/server/event.js'
 
 export const load = async ({ locals: { getSession } }) => {
   const session = await getSession()
@@ -10,10 +11,8 @@ export const load = async ({ locals: { getSession } }) => {
 }
 
 export const actions = {
-  signup: async ({ request, locals: { supabase } }) => {
-    const formData = await request.formData()
-    const email = formData.get('email') as string
-    const password = formData.get('password') as string
+  signup: async ({ locals: { supabase } }) => {
+    const { email, password } = await getFormData('email', 'password')
 
     if (!email || !password)
       return Fail(
@@ -31,10 +30,8 @@ export const actions = {
     else
       return { message: 'Please check your email to confirm your signup.' }
   },
-  signin_email: async ({ request, locals: { supabase } }) => {
-    const formData = await request.formData()
-    const email = formData.get('email') as string
-    const password = formData.get('password') as string
+  signin_email: async ({ locals: { supabase } }) => {
+    const { email, password } = await getFormData('email', 'password')
 
     if (!email || !password)
       return Fail(
@@ -53,9 +50,8 @@ export const actions = {
     /* Login successful, redirect. */
     redirect(303, '/app')
   },
-  signin_otp: async ({ request, locals: { supabase }}) => {
-    const formData = await request.formData()
-    const phone = formData.get('phone') as string
+  signin_otp: async ({ locals: { supabase }}) => {
+    const { phone } = await getFormData('phone')
 
     if (!phone) {
       return Fail(
@@ -73,9 +69,8 @@ export const actions = {
     return { message: 'Please check your phone for the OTP code and enter it below.' , verify: true, phone }
 
   },
-  oauth: async ({ request, url, locals: { supabase }}) => {
-    const formData = await request.formData()
-    const provider = formData.get('provider') as Provider
+  oauth: async ({ url, locals: { supabase }}) => {
+    const { provider } = await getFormData<Provider>('provider')
 
     /**
      * Sign-in will not happen yet, because we're on the server-side, 
@@ -94,9 +89,8 @@ export const actions = {
     /* Now authorize sign-in on browser. */
     if (data.url) redirect(303, data.url)
   },
-  magic: async ({ request, locals: { supabase }}) => {
-    const formData = await request.formData()
-    const email = formData.get('email') as string
+  magic: async ({ locals: { supabase }}) => {
+    const { email } = await getFormData('email')
 
     if (!email)
       return Fail({ message: 'Please enter an email.' })
@@ -119,9 +113,8 @@ export const actions = {
     /* Login successful, redirect. */
     redirect(303, '/app')
   },
-  reset: async({ request, locals: { supabase } }) => {
-    const formData = await request.formData()
-    const email = formData.get('email') as string
+  reset: async({ locals: { supabase } }) => {
+    const { email } = await getFormData('email')
 
     if (!email)
       return Fail({ message: 'Please enter an email.' })
@@ -137,10 +130,8 @@ export const actions = {
     await supabase.auth.signOut()
     redirect(303, '/')
   },
-  verify_otp: async ({ request, locals: { supabase } }) => {
-    const formData = await request.formData()
-    const otp = formData.get('otp') as string
-    const phone = formData.get('phone') as string
+  verify_otp: async ({ locals: { supabase } }) => {
+    const { otp, phone } = await getFormData('otp', 'phone')
 
     if (!otp) {
       return Fail(
