@@ -1,6 +1,5 @@
-import { redirect } from '@sveltejs/kit'
+import { fail, redirect } from '@sveltejs/kit'
 import { type Provider } from '@supabase/supabase-js'
-import { Fail } from '$lib/utils.js'
 import { getFormData } from '$lib/server/event.js'
 
 export const load = async ({ locals: { getSession } }) => {
@@ -15,9 +14,8 @@ export const actions = {
     const { email, password } = await getFormData('email', 'password')
 
     if (!email || !password)
-      return Fail(
-        { message: 'Please enter an email and password' }, 
-        { email }
+      return fail(400,
+        { error: 'Please enter an email and password', email }
       )
 
     const { error } = await supabase.auth.signUp({
@@ -26,7 +24,7 @@ export const actions = {
     })
 
     if (error)
-      return Fail(error, { email })
+      return fail(error.status ?? 400, { error: error.message, email })
     else
       return { message: 'Please check your email to confirm your signup.' }
   },
@@ -34,9 +32,8 @@ export const actions = {
     const { email, password } = await getFormData('email', 'password')
 
     if (!email || !password)
-      return Fail(
-        { message: 'Please enter an email and password' }, 
-        { email }
+      return fail(400,
+        { error: 'Please enter an email and password', email }
       )
     
     const { error } = await supabase.auth.signInWithPassword({
@@ -45,7 +42,7 @@ export const actions = {
     })
   
     if (error)
-      return Fail(error, { email })
+      return fail(error.status ?? 400, { error: error.message, email })
 
     /* Login successful, redirect. */
     redirect(303, '/app')
@@ -54,8 +51,8 @@ export const actions = {
     const { phone } = await getFormData('phone')
 
     if (!phone) {
-      return Fail(
-        { message: 'Please enter a phone number.' }
+      return fail(400,
+        { error: 'Please enter a phone number.' }
       )
     }
 
@@ -64,7 +61,7 @@ export const actions = {
     })
 
     if (error)
-      return Fail({ message: error.message, phone })
+      return fail(error.status ?? 400, { error: error.message, phone })
 
     return { message: 'Please check your phone for the OTP code and enter it below.' , verify: true, phone }
 
@@ -84,7 +81,7 @@ export const actions = {
     })
 
     if (error)
-      return Fail(error)
+      return fail(error.status ?? 400, { error: error.message })
 
     /* Now authorize sign-in on browser. */
     if (data.url) redirect(303, data.url)
@@ -93,14 +90,14 @@ export const actions = {
     const { email } = await getFormData('email')
 
     if (!email)
-      return Fail({ message: 'Please enter an email.' })
+      return fail(400, { error: 'Please enter an email.' })
 
     const { error } = await supabase.auth.signInWithOtp({
       email
     })
 
     if (error)
-      return Fail(error, { email })
+      return fail(error.status ?? 400, { error: error.message, email })
     else
       return { message: 'Please check your email to login.' }
   },
@@ -108,7 +105,7 @@ export const actions = {
     const { error } = await supabase.auth.signInAnonymously()
 
     if (error)
-      return Fail(error)
+      return fail(error.status ?? 400, { error: error.message })
 
     /* Login successful, redirect. */
     redirect(303, '/app')
@@ -117,12 +114,12 @@ export const actions = {
     const { email } = await getFormData('email')
 
     if (!email)
-      return Fail({ message: 'Please enter an email.' })
+      return fail(400, { error: 'Please enter an email.' })
 
     const { error } = await supabase.auth.resetPasswordForEmail(email)
 
     if (error)
-      return Fail(error, { email })
+      return fail(error.status ?? 400, { error: error.message, email })
     else
       return { message: 'Please check your email to reset your password.' }
   },
@@ -134,8 +131,8 @@ export const actions = {
     const { otp, phone } = await getFormData('otp', 'phone')
 
     if (!otp) {
-      return Fail(
-        { message: 'Please enter an OTP.', verify: true, phone }
+      return fail(400,
+        { error: 'Please enter an OTP.', verify: true, phone }
       )
     }
 
@@ -147,6 +144,6 @@ export const actions = {
     })
 
     if (error)
-      return Fail({ message: error.message, verify: true, phone })
+      return fail(error.status ?? 400, { error: error.message, verify: true, phone })
   }
 }

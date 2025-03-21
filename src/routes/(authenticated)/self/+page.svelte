@@ -1,9 +1,8 @@
 <script lang="ts">
   let { data, form } = $props()
-
   let { session } = $state(data)
+  
   const providers = session?.user.app_metadata.providers
-  console.log(providers)
   const has_email_provider = providers 
     ? providers.some((p: string) => p === 'email') 
     : session?.user.app_metadata.provider === 'email'
@@ -23,7 +22,7 @@
   </form>
   <form method="POST" action="?/update_nickname">
     Change your nickname:
-    <input name="nickname" type="text" value={form?.data?.nickname ?? ""}>
+    <input name="nickname" type="text" value={form?.nickname ?? ""}>
     <button style="margin-top: 12px;">Update</button>
     <button formaction="?/delete_nickname" style="margin-top: 12px;">Delete</button>
   </form>

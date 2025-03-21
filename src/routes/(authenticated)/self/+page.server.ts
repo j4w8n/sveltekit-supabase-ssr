@@ -1,9 +1,8 @@
 import type { Provider } from "@supabase/supabase-js"
-import { redirect } from "@sveltejs/kit"
+import { fail, redirect } from "@sveltejs/kit"
 import { PUBLIC_SUPABASE_URL } from '$env/static/public'
 import { SUPABASE_SERVICE_ROLE_KEY } from '$env/static/private'
 import { createClient } from '@supabase/supabase-js'
-import { Fail } from "$lib/utils.js"
 import { getFormData } from "$lib/server/event.js"
 
 export const load = async ({ locals: { getSession } }) => {
@@ -28,15 +27,15 @@ export const actions = {
     const { email } = await getFormData('email')
 
     if (!email) {
-      return Fail({
-        message: 'Please provide your email address.'
+      return fail(400, {
+        error: 'Please provide your email address.'
       })
     }
 
     const { error } = await supabase.auth.updateUser({ email })
 
     if (error)
-      return Fail(error)
+      return fail(error.status ?? 400, { error: error.message })
 
     return { 
       message: 'Please check your email for the OTP code and enter it below, along with your new password.' , 
@@ -49,15 +48,15 @@ export const actions = {
     const { provider } = await getFormData<Provider>('provider')
 
     if (!provider) {
-      return Fail({
-        message: 'Please pass a provider.'
+      return fail(400, {
+        error: 'Please pass a provider.'
       })
     }
 
     const { data, error } = await supabase.auth.linkIdentity({ provider, options: { redirectTo: 'http:/localhost:5173/self' } })
 
     if (error)
-      return Fail(error)
+      return fail(error.status ?? 400, { error: error.message })
 
     if (data.url) redirect(303, data.url)
   },
@@ -67,7 +66,7 @@ export const actions = {
     })
 
     if (error)
-      return Fail(error, { nickname: '' })
+      return fail(error.status ?? 400, { error: error.message, nickname: '' })
 
     /* Refresh tokens, so we can display the new nickname. */
     await supabase.auth.refreshSession()
@@ -76,8 +75,8 @@ export const actions = {
     const { user } = await getFormData('user')
 
     if (!user) {
-      return Fail({
-        message: 'Please enter a user id.'
+      return fail(400, {
+        error: 'Please enter a user id.'
       })
     }
 
@@ -86,7 +85,7 @@ export const actions = {
     const { error } = await supabase.auth.admin.deleteUser(user)
     
     if (error)
-      return Fail(error)
+      return fail(error.status ?? 400, { error: error.message })
 
     return { message: 'User deleted.' }
   },
@@ -94,9 +93,8 @@ export const actions = {
     const { nickname } = await getFormData('nickname')
 
     if (!nickname) {
-      return Fail(
-        { message: 'Please enter a nickname.' },
-        { nickname: '' }
+      return fail(400,
+        { error: 'Please enter a nickname.' }
       )
     }
 
@@ -105,7 +103,7 @@ export const actions = {
     })
 
     if (error)
-      return Fail(error, { nickname })
+      return fail(error.status ?? 400, { error: error.message, nickname })
 
     /* Refresh tokens, so we can display the new nickname. */
     await supabase.auth.refreshSession()
@@ -114,8 +112,8 @@ export const actions = {
     const { password } = await getFormData('password')
 
     if (!password) {
-      return Fail({
-        message: 'Please enter a new password'
+      return fail(400, {
+        error: 'Please enter a new password'
       })
     }
 
@@ -124,7 +122,7 @@ export const actions = {
     })
 
     if (error)
-      return Fail(error)
+      return fail(error.status ?? 400, { error: error.message })
 
     return { message: 'Password updated!' }
   },
@@ -132,8 +130,8 @@ export const actions = {
     const { phone } = await getFormData('phone')
 
     if (!phone) {
-      return Fail(
-        { message: 'Please enter a phone number.' }
+      return fail(400,
+        { error: 'Please enter a phone number.' }
       )
     }
 
@@ -143,7 +141,7 @@ export const actions = {
     })
 
     if (error)
-      return Fail({ message: error.message })
+      return fail(error.status ?? 400, { error: error.message })
 
     return { message: 'Please check your phone for the OTP code and enter it below.' , verify: true, phone }
   },
@@ -155,7 +153,7 @@ export const actions = {
     const { otp, phone, email, password } = await getFormData('otp', 'phone', 'email', 'password')
 
     if (!otp) {
-      return Fail(
+      return fail(400,
         { message: 'Please enter an OTP.', verify: true, phone, email, password_prompt: password ? false : true }
       )
     }
@@ -168,7 +166,7 @@ export const actions = {
       })
 
       if (error)
-        return Fail({ message: error.message, verify: true, phone })
+        return fail(error.status ?? 400, { error: error.message, verify: true, phone })
 
     } else if (email) {
       const { error } = await supabase.auth.verifyOtp({
@@ -178,14 +176,14 @@ export const actions = {
       })
 
       if (error)
-        return Fail({ message: error.message, verify: true, email, password_prompt: true })
+        return fail(400, { error: error.message, verify: true, email, password_prompt: true })
 
       const { error: updateError } = await supabase.auth.updateUser({
         password
       })
 
       if (updateError)
-        return Fail({ message: updateError.message, verify: true, email, password_prompt: true })
+        return fail(updateError.status ?? 400, { error: updateError.message, verify: true, email, password_prompt: true })
     }
 
     return { message: 'Success!' , verify: false, password_prompt: false }
