@@ -69,6 +69,9 @@ export const actions = {
   oauth: async ({ url, locals: { supabase }}) => {
     const { provider } = await getFormData<Provider>('provider')
 
+    if (!provider)
+      return fail(400, { error: 'No provider found.'})
+
     /**
      * Sign-in will not happen yet, because we're on the server-side, 
      * but we need the returned url.
@@ -133,6 +136,12 @@ export const actions = {
     if (!otp) {
       return fail(400,
         { error: 'Please enter an OTP.', verify: true, phone }
+      )
+    }
+
+    if (!phone) {
+      return fail(400,
+        { error: 'No phone number found.', verify: true }
       )
     }
 

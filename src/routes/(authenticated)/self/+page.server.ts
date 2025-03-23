@@ -168,7 +168,7 @@ export const actions = {
       if (error)
         return fail(error.status ?? 400, { error: error.message, verify: true, phone })
 
-    } else if (email) {
+    } else if (email && password) {
       const { error } = await supabase.auth.verifyOtp({
         email,
         type: 'email_change',
