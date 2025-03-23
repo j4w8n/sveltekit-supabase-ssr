@@ -184,6 +184,8 @@ export const actions = {
 
       if (updateError)
         return fail(updateError.status ?? 400, { error: updateError.message, verify: true, email, password_prompt: true })
+    } else {
+      return fail(400, { error: 'No phone or email/password received.'})
     }
 
     return { message: 'Success!' , verify: false, password_prompt: false }
