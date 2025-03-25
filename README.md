@@ -71,10 +71,8 @@ Open a browser to http://localhost:5173
 
 ## Security
 
-Within the `(authenticated)` layout group, we have a `+page.server.ts` file for each route. This ensures that even during client navigation the `hooks.server.ts` file is run so that we can verify there's still a session before rendering the page.
+Within the `(authenticated)` layout group, we have a `+page.server.ts` file for each route. This ensures that even during "client-side navigation" the `hooks.server.ts` file is run so that we can verify there's still a session before rendering the page. I put that in double-quotes because this process essentially disables client-side navigation for these pages.
 
-We check for and fully validate the session by calling `event.locals.getSession()`. Inside that function, we verify the `access_token`, aka JWT, and use it's decoded contents to help create a validated session for use on the server-side.
-
-Full validation is important because sessions are stored in a cookie sent from a client. The client could be an attacker with just enough information to bypass checks within `supabase.auth.getSession()` and possibly render data for a victim user. See [this discussion](https://github.com/orgs/supabase/discussions/23224) for details.
+We check for and fully validate the session by calling `event.locals.getSession()`. Inside that function, we call `getClaims` to verify the `access_token`, aka JWT, and use it's decoded contents to help create a validated session for use on the server-side. This validation is important because sessions are stored in a cookie sent from a client. The client could be an attacker with just enough information to bypass checks in a simple `supabase.auth.getSession()` call, and possibly render data for a victim user. See [this discussion](https://github.com/orgs/supabase/discussions/23224) for details.
 
 !!! Just verifying the JWT does not validate other information within getSession's `session.user` object; this is a big reason why we do the "full validation" by replacing its contents using info from the verified and decoded JWT. See discussion link above. !!!
