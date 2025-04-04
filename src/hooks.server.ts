@@ -46,8 +46,7 @@ export const handle: Handle = async ({ event, resolve }) => {
        */
       const { data, error } = await event.locals.supabase.auth.getClaims(session.access_token)
 
-      if (error) throw error
-      if (!data) return null
+      if (error || !data) return null
 
       const { claims } = data
 
