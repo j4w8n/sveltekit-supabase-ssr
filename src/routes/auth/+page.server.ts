@@ -100,7 +100,7 @@ export const actions = {
     })
 
     if (error)
-      return fail(error.status ?? 400, { error: error.message, email })
+      return fail(error.status ?? 400, { error: error.message })
     else
       return { message: 'Please check your email to login.' }
   },
@@ -122,7 +122,7 @@ export const actions = {
     const { error } = await supabase.auth.resetPasswordForEmail(email)
 
     if (error)
-      return fail(error.status ?? 400, { error: error.message, email })
+      return fail(error.status ?? 400, { error: error.message })
     else
       return { message: 'Please check your email to reset your password.' }
   },
