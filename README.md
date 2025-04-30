@@ -32,30 +32,34 @@ npm install
 
 ## Setup
 
-1. Environment variables.
+1. Environment variables
     
-    Rename the `.env.example` file to `.env.local` in your project's root directory and assign values. They can be found in your Supabase project's dashboard at Project Settings > Data API.
+    Rename the `.env.example` file to `.env.local` in your project's root directory and assign values from your [dashboard](https://supabase.com/dashboard/project/_/settings/api).
     ```
     PUBLIC_SUPABASE_ANON_KEY=<your-project-anon-key>
     PUBLIC_SUPABASE_URL=https://<your-project-id>.supabase.co
     SUPABASE_SERVICE_ROLE_KEY=<your-project-service-role-key>
     ```
 
-2. If using the signup, magiclink, or reset password features, change their email template anchor links per the below. In your Supabase project's dashboard, go to Authentication > Emails.
+2. Email Templates - [link](https://supabase.com/dashboard/project/_/auth/templates)
+    
+    If using the signup, magiclink, or reset password features, change their template anchor links per the below.
 
     All need this: `href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email"`, which should replace the `{{ .ConfirmationURL }}`, and then there are some additions for magic link and reset:
 
     - Magic Link: add `&next=/app` at the end of the above href.
     - Reset Password: add `&next=/self` at the end of the above href.
 
-3. Site URL and Redirect URLs. In your Supabase project's dashboard, go to Authentication > URL Configuration, and change them to reflect the below.
+3. Site URL and Redirect URLs - [link](https://supabase.com/dashboard/project/_/auth/url-configuration)
+
+    Ensure these are set.
     - Site:
         - `http://localhost:5173`
     - Redirects:
         - `http://localhost:5173/auth/confirm`
         - `http://localhost:5173/auth/callback`
 
-4. User and provider settings. In your Supabase project's dashbord, go to Authentication > Sign In / Up
+4. User and provider settings - [link](https://supabase.com/dashboard/project/_/auth/providers)
     - Under "User Signups", ensure that all three settings are enabled.
     - Under "Auth Providers", enable and configure the relevant ones for you.
         - If using the phone OTP login, you must setup an SMS provider. You can use Twilio Verify and get a $15 credit.
