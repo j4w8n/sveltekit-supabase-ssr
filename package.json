@@ -3,9 +3,10 @@
   "version": "0.14.0",
   "private": true,
   "scripts": {
-    "dev": "vite dev",
+    "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
+    "preview": "vite build && vite preview",
+    "debug": "vite --force",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
   },
