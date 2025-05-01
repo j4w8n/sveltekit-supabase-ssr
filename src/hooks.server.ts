@@ -27,9 +27,7 @@ export const handle: Handle = async ({ event, resolve }) => {
    * wouldn't correctly update data on its page.
    */
   event.locals.getSession = async (): Promise<Session | null> => {
-    const {
-      data: { session },
-    } = await event.locals.supabase.auth.getSession()
+    const { data: { session } } = await event.locals.supabase.auth.getSession()
 
     if (!session) return null
 
@@ -51,7 +49,8 @@ export const handle: Handle = async ({ event, resolve }) => {
       const { claims } = data
 
       /**
-       * Create a validated session, mostly from claims.
+       * Return a Session, created from validated claims.
+       * 
        * For security, the only items you should use from `session` are the access and refresh tokens.
        * 
        * Most of these properties are required for functionality or typing.
@@ -62,10 +61,8 @@ export const handle: Handle = async ({ event, resolve }) => {
        * `user.user_metadata.nickname`
        * `user.email`
        * `user.phone`
-       * 
-       * If not used, `user.user_metadata` should be an empty object.
        */
-      const validated_session: Session = {
+      return {
         access_token: session.access_token,
         refresh_token: session.refresh_token,
         expires_at: claims.exp,
@@ -78,15 +75,10 @@ export const handle: Handle = async ({ event, resolve }) => {
           id: claims.sub,
           email: claims.email,
           phone: claims.phone,
-          user_metadata: {
-            avatar_url: claims.user_metadata?.avatar_url,
-            nickname: claims.user_metadata?.nickname
-          },
+          user_metadata: claims.user_metadata ?? {},
           is_anonymous: claims.is_anonymous
         }
       }
-
-      return validated_session
     } catch (err) {
       console.error(err)
       return null
