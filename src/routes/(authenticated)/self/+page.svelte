@@ -1,11 +1,15 @@
 <script lang="ts">
   let { data, form } = $props()
-  let { session } = $state(data)
+  let { session } = $derived(data)
   
-  const providers = session?.user.app_metadata.providers
-  const has_email_provider = providers 
-    ? providers.some((p: string) => p === 'email') 
-    : session?.user.app_metadata.provider === 'email'
+  let has_email_provider = $state(false)
+
+  $effect(() => {
+    const providers = session?.user.app_metadata.providers
+    has_email_provider = providers 
+      ? providers.some((p: string) => p === 'email') 
+      : session?.user.app_metadata.provider === 'email'
+  })
 </script>
 
 {#if session}
