@@ -1,9 +1,9 @@
 import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public'
 import { createServerClient } from '@supabase/ssr'
-import { redirect, type Handle } from '@sveltejs/kit'
+import { redirect } from '@sveltejs/kit'
 import type { Session } from '@supabase/supabase-js'
 
-export const handle: Handle = async ({ event, resolve }) => {
+export const handle = async ({ event, resolve }) => {
   event.locals.supabase = createServerClient(
     PUBLIC_SUPABASE_URL,
     PUBLIC_SUPABASE_ANON_KEY,
@@ -41,6 +41,9 @@ export const handle: Handle = async ({ event, resolve }) => {
        * 
        * We pass the access_token into getClaims, otherwise it
        * would call getSession itself - which we've already done above.
+       * 
+       * If you need data that is only returned from `getUser`,
+       * then you can substitute it here and assign accordingly in the return statement.
        */
       const { data, error } = await event.locals.supabase.auth.getClaims(session.access_token)
 
@@ -71,7 +74,7 @@ export const handle: Handle = async ({ event, resolve }) => {
         user: {
           app_metadata: claims.app_metadata ?? {},
           aud: 'authenticated',
-          created_at: '',
+          created_at: '', // only found in session.user or getUser
           id: claims.sub,
           email: claims.email,
           phone: claims.phone,
