@@ -7,12 +7,12 @@
   /**
    * We use the $derived rune so that
    * `supabase` and `session` are updated
-   * during invalidation.
+   * during invalidation. $state doesn't do this.
    * 
    * An updated supabase client isn't typically needed,
    * but the ssr libary returns a cached client
    * for us during invalidation. Otherwise we'd be
-   * initializing a client every time the token refreshes.
+   * initializing a client during every invalidation.
    */
   let { supabase, session } = $derived(data)
 
@@ -27,7 +27,7 @@
        */
       if (_session?.expires_at !== session?.expires_at) {
         /**
-         * We only call `signOut()` on the server side,
+         * We typically only call `signOut()` on the server side,
          * but if `_session` is null - from the user
          * being deleted or the supabase client
          * failing to refresh a token, for example -

@@ -6,20 +6,7 @@ import { createClient } from '@supabase/supabase-js'
 import { getFormData } from "$lib/server/event.js"
 
 export const load = async ({ locals: { getSession } }) => {
-  /**
-   * Auth validation happens in hooks.server.ts, so there's
-   * no need to check anything here.
-   * 
-   * If you have a one-off situation, or you'd rather be
-   * more explicit, check for a session and redirect.
-   * 
-   * import { redirect } from '@sveltejs/kit' // Would be added in with the `redirect` import above.
-   * if (!session) redirect(307, '/auth') // Would be added after the `const session...` below.
-   */
-
-  const session = await getSession()
-
-  return { session }
+  return { session: await getSession() }
 }
 
 export const actions = {
