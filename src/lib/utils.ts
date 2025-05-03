@@ -1,5 +1,8 @@
 import type { SupabaseClient, Session } from "@supabase/supabase-js"
 
+/**
+ * Validate a session on the client or server side.
+ */
 export const getValidatedSession = async (supabase: SupabaseClient): Promise<Session | null> => {
   const session = (await supabase.auth.getSession()).data.session
 
