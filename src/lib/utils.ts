@@ -1,6 +1,6 @@
-import type { SupabaseClient } from "@supabase/supabase-js"
+import type { SupabaseClient, Session } from "@supabase/supabase-js"
 
-export const getValidatedSession = async (supabase: SupabaseClient) => {
+export const getValidatedSession = async (supabase: SupabaseClient): Promise<Session | null> => {
   const session = (await supabase.auth.getSession()).data.session
 
   if (!session) return null
