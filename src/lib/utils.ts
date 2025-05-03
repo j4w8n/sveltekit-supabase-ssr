@@ -10,8 +10,6 @@ export const getValidatedSession = async (supabase: SupabaseClient): Promise<Ses
     /**
      * If your project is using symmetric JWTs,
      * getClaims makes a network call to your Supabase instance.
-     * To avoid this, see our hooks code in v0.13.0 to validate
-     * and get claims using your JWT secret.
      * 
      * We pass the access_token into getClaims, otherwise it
      * would call getSession itself - which we've already done above.
