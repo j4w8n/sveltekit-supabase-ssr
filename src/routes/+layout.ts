@@ -1,4 +1,5 @@
 import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from '$env/static/public'
+import { getValidatedSession } from '$lib/utils.js'
 import { createBrowserClient, createServerClient, isBrowser } from '@supabase/ssr'
 
 export const load = async ({ fetch, data, depends }) => {
@@ -17,7 +18,7 @@ export const load = async ({ fetch, data, depends }) => {
         }
       })
 
-  const session = isBrowser() ? (await supabase.auth.getSession()).data.session : data.session
+  const session = isBrowser() ? await getValidatedSession(supabase) : data.session
 
   return { supabase, session }
 }
