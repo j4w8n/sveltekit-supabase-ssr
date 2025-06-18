@@ -4,6 +4,7 @@ Uses SvelteKit, Supabase, and SSR Auth.
 
 ## Code Showcase
 
+- Uses new API keys.
 - Email sign-up/sign-in.
 - Phone OTP sign-in.
 - Reset password for email sign-in.
@@ -36,9 +37,9 @@ npm install
     
     Rename the `.env.example` file to `.env.local` in your project's root directory and assign values from your [dashboard](https://supabase.com/dashboard/project/_/settings/api).
     ```
-    PUBLIC_SUPABASE_ANON_KEY=<your-project-anon-key>
     PUBLIC_SUPABASE_URL=https://<your-project-id>.supabase.co
-    SUPABASE_SERVICE_ROLE_KEY=<your-project-service-role-key>
+    PUBLIC_SUPABASE_PUBLISHABLE_KEY=<your-project-publishable-key>
+    SUPABASE_SECRET_KEY=<your-project-secret-key>
     ```
 
 2. Email Templates - [link](https://supabase.com/dashboard/project/_/auth/templates)
