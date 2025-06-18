@@ -1,4 +1,4 @@
-import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY } from '$env/static/public'
+import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_PUBLISHABLE_KEY } from '$env/static/public'
 import { createServerClient } from '@supabase/ssr'
 import { redirect } from '@sveltejs/kit'
 import type { Session } from '@supabase/supabase-js'
@@ -7,7 +7,7 @@ import { getValidatedSession } from '$lib/utils.js'
 export const handle = async ({ event, resolve }) => {
   event.locals.supabase = createServerClient(
     PUBLIC_SUPABASE_URL,
-    PUBLIC_SUPABASE_ANON_KEY,
+    PUBLIC_SUPABASE_PUBLISHABLE_KEY,
     {
       cookies: {
         getAll: () => event.cookies.getAll(),
