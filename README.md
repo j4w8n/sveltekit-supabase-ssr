@@ -5,6 +5,7 @@ Uses SvelteKit, Supabase, and SSR Auth.
 ## Code Showcase
 
 - Uses new API keys.
+- Supports Asymmetric JWTs
 - Email sign-up/sign-in.
 - Phone OTP sign-in.
 - Reset password for email sign-in.
