@@ -13,12 +13,22 @@ export const getValidatedSession = async (supabase: SupabaseClient): Promise<Ses
     /**
      * If your project is using symmetric JWTs,
      * getClaims makes a network call to your Supabase instance.
+     * If using asymmetric JWTs, most network calls will hit
+     * Supabase's global cache, returning within a few milliseconds.
      * 
      * We pass the access_token into getClaims, otherwise it
      * would call getSession itself - which we've already done above.
      * 
      * If you need data that is only returned from `getUser`,
      * then you can substitute it here and assign accordingly in the return statement.
+     * 
+     * getClaims does not check the following about the user.
+     * If you need these, use getUser.
+     * - is deleted
+     * - is banned
+     * - has been logged out globally from a different client
+     * - JWT's session id is listed in auth.sessions
+     * - (etc)
      */
     const { data, error } = await supabase.auth.getClaims(session.access_token)
 
