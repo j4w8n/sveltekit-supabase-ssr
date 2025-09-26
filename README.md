@@ -2,22 +2,26 @@
 
 Uses SvelteKit, Supabase, and SSR Auth.
 
+Work In Progress, using the below features. Feedback welcome.
+
+## Platform Features
+- New Supabase API keys.
+- Supports Supabase Asymmetric JWTs.
+- SvelteKit Remote Functions.
+- Async Svelte.
+
 ## Code Showcase
 
-- Uses new API keys.
-- Supports Asymmetric JWTs
-- Email sign-up/sign-in.
-- Phone OTP sign-in.
-- Reset password for email sign-in.
-- Anonymous sign in.
+- Email signup/signin.
+- Phone OTP signin.
+- Reset password for email signin.
+- Anonymous signin.
 - Convert Anonymous user to permanent user.
-- GitHub sign-in. Can easily be changed to other oauth providers.
+- GitHub signin. Can easily be changed to other oauth providers.
 - Requires a session to access all pages under the `authenticated` layout group.
 - Add, change, remove custom `nickname` user_metadata on the `/self` page.
 - Add or change a user's phone number on the `/self` page.
 - Delete a user on the `/self` page - if needed, when playing around with the demo.
-
-> All actions happen server-side.
 
 ## Prerequisites
 
@@ -66,6 +70,8 @@ npm install
     - Under "Auth Providers", enable and configure the relevant ones for you.
         - If using the phone OTP login, you must setup an SMS provider. You can use Twilio Verify and get a $15 credit.
 
+5. If creating Supabase database types, code points to `src/DatabaseDefinitions.ts`; so save them there or change the path in `src/app.d.ts`.
+
 ## Run!
 
 ```
@@ -78,6 +84,6 @@ Open a browser to http://localhost:5173
 
 Within the `(authenticated)` layout group, we have a `+page.server.ts` file for each route. This ensures that even during "client-side navigation" the `hooks.server.ts` file is run so that we can verify there's still a session before rendering the page. I put that in double-quotes because this process essentially disables client-side navigation for these pages.
 
-We check for and fully validate the session by calling `event.locals.getSession()`. Inside that function, we call `getClaims` to verify the `access_token`, aka JWT, and use it's decoded contents to help create a validated session for use on the server-side. This validation is important because sessions are stored in a cookie sent from a client. The client could be an attacker with just enough information to bypass checks in a simple `supabase.auth.getSession()` call, and possibly render data for a victim user. See [this discussion](https://github.com/orgs/supabase/discussions/23224) for details.
+We check for and fully validate the session by calling the `getSession()` remote function. Inside that function, we call `getClaims` to verify the `access_token`, aka JWT, and use it's decoded contents to help create a validated session for use on the server-side. This validation is important because sessions are stored in a cookie sent from a client. The client could be an attacker with just enough information to bypass checks in a simple `supabase.auth.getSession()` call, and possibly render data for a victim user. See [this discussion](https://github.com/orgs/supabase/discussions/23224) for details.
 
 !!! Just verifying the JWT does not validate other information within getSession's `session.user` object; this is a big reason why we do the "full validation" by replacing its contents using info from the verified and decoded JWT. See discussion link above. !!!
