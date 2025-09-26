@@ -1,31 +1,26 @@
 <script lang="ts">
-  import { goto, invalidate } from '$app/navigation'
-  import { onMount } from 'svelte'
+  import { goto } from "$app/navigation"
+  import { createBrowserClient } from "$lib/supabase/browser.js"
+  import { onMount } from "svelte"
+  import { signout } from "./auth/auth.remote.js"
+  import { getSession } from "$lib/supabase/supabase.remote.js"
 
-  let { data, children } = $props()
+  let { children } = $props()
+  let session = $derived(getSession())
 
-  /**
-   * We use the $derived rune so that
-   * `supabase` and `session` are updated
-   * during invalidation. $state doesn't do this.
-   * 
-   * An updated supabase client isn't typically needed,
-   * but the ssr libary returns a cached client
-   * for us during invalidation. Otherwise we'd be
-   * initializing a client during every invalidation.
-   */
-  let { supabase, session } = $derived(data)
+  // We mostly use this browser client and onAuthStateChange
+  // to refresh tokens and update the session for demo app purposes.
+  // They're not strictly needed.
 
+  const supabase = createBrowserClient()
   onMount(() => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, _session) => {
-      /**
-       * Instead of invalidating, you could call
-       * `session = _session` below and you wouldn't
-       * necessarily need to call `invalidate`.
-       */
-      if (_session?.expires_at !== session?.expires_at) {
+      if (_session?.expires_at !== session.current?.expires_at) {
+        // Keep session updated for demo purposes in the nav bar.
+        getSession().set(_session)
+
         /**
          * We typically only call `signOut()` on the server side,
          * but if `_session` is null - from the user
@@ -34,11 +29,8 @@
          * the SIGNED_OUT event is fired, and
          * calling `goto` ensures the user's screen 
          * reflects that they're logged out.
-         * Note that the invalidation still happens.
          */
         if (event === 'SIGNED_OUT') await goto('/')
-
-        invalidate('supabase:auth')
       }
     })
 
@@ -46,29 +38,34 @@
   })
 </script>
 
+<svelte:boundary>
 <nav style="border: solid; border-width: 0 0 2px; padding-bottom: 5px;">
   <a href="/">Home</a>
-  {#if session}
+  {#if session.current}
     <a href="/app">App</a>
     <a href="/self">Self</a>
     <img 
       style="width: 32px; height: 32px; border-radius: 9999px;" 
-      src={session.user.user_metadata.avatar_url ?? 'https://api.dicebear.com/8.x/fun-emoji/svg'} 
+      src={session.current.user.user_metadata.avatar_url ?? 'https://api.dicebear.com/8.x/fun-emoji/svg'} 
       alt="person_avatar"
     >
     <p>
       Session expires at: {
-        session?.expires_at 
-        ? new Date(session.expires_at * 1000).toLocaleString() 
+        session.current.expires_at 
+        ? new Date(session.current.expires_at * 1000).toLocaleString() 
         : 'unknown'
       }
     </p>
-    <form method="POST" action="auth?/signout">
+    <form {...signout}>
       <button>Logout</button>
     </form>
   {:else}
     <a href='/auth'>Login</a>
   {/if}
 </nav>
+{#snippet pending()}
+  <p>Loading...</p>
+{/snippet}
+</svelte:boundary>
 
 {@render children?.()}

@@ -1,14 +1,16 @@
-import type { SupabaseClient, Session } from "@supabase/supabase-js"
+import type { Session, SupabaseClient } from "@supabase/supabase-js"
 
 /**
- * Validate a session on the client or server side.
+ * Validate a session using JWT claims.
+ * 
+ * Can be called from the server or the browser.
  */
 export const getValidatedSession = async (supabase: SupabaseClient): Promise<Session | null> => {
-  const session = (await supabase.auth.getSession()).data.session
+  let session = (await supabase.auth.getSession()).data.session
 
   if (!session) return null
 
-  /* We wrap getClaims in a try/catch, because it could throw. */
+  /* We wrap everything in a try/catch, because getClaims could throw. */
   try {
     /**
      * If your project is using symmetric JWTs,
@@ -23,7 +25,7 @@ export const getValidatedSession = async (supabase: SupabaseClient): Promise<Ses
      * then you can substitute it here and assign accordingly in the return statement.
      * 
      * getClaims does not check the following about the user.
-     * If you need these, use getUser.
+     * If you need these, pass `true` as a second argument to `getValidatedSession`.
      * - is deleted
      * - is banned
      * - has been logged out globally from a different client
@@ -32,7 +34,13 @@ export const getValidatedSession = async (supabase: SupabaseClient): Promise<Ses
      */
     const { data, error } = await supabase.auth.getClaims(session.access_token)
 
-    if (error || !data) return null
+    if (!data) return null
+
+    /* You can decide if an error should return null or not. */
+    if (error) {
+      console.error(error)
+      // return null
+    }
 
     const { claims } = data
 

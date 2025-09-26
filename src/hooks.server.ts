@@ -1,37 +1,8 @@
-import { PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_PUBLISHABLE_KEY } from '$env/static/public'
-import { createServerClient } from '@supabase/ssr'
-import { redirect } from '@sveltejs/kit'
-import type { Session } from '@supabase/supabase-js'
-import { getValidatedSession } from '$lib/utils.js'
+import { redirect } from "@sveltejs/kit"
+import { getSession } from "$lib/supabase/supabase.remote.js"
 
 export const handle = async ({ event, resolve }) => {
-  event.locals.supabase = createServerClient(
-    PUBLIC_SUPABASE_URL,
-    PUBLIC_SUPABASE_PUBLISHABLE_KEY,
-    {
-      cookies: {
-        getAll: () => event.cookies.getAll(),
-        setAll: (cookies) => {
-          cookies.forEach(({ name, value, options }) => {
-            event.cookies.set(name, value, { ...options, path: '/' })
-          })
-        }
-      }
-    }
-  )
-
-  /**
-   * We use getSession, as a function, rather than a static object
-   * like `session`, in order to make reactivity work for some
-   * features of our pages. For example, if this wasn't a function,
-   * things like the `update_nickname` form action in /self 
-   * wouldn't correctly update data on its page.
-   */
-  event.locals.getSession = async (): Promise<Session | null> => {
-    return await getValidatedSession(event.locals.supabase)
-  }
-
-  const session = await event.locals.getSession()
+  const session = await getSession()
 
   /**
    * Only authenticated users can access these paths and their sub-paths.

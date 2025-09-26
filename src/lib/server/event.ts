@@ -1,21 +1,18 @@
-import { getRequestEvent } from "$app/server" 
+import type { RemoteFormInput } from "@sveltejs/kit"
 
 /**
- * Returns the formData items you request,
- * from an `event`.
+ * Returns the formData items you request.
  * 
- * @example const { email, password } = await getFormData('email', 'password')
+ * @example const { email, password } = await getFormData(data, 'email', 'password')
  */
 export const getFormData = async <
 T = string, 
 K extends string = string
->(...items: K[]): Promise<{ [key in K]: T | null }> => {
-  const { request } = getRequestEvent()
-  const data = await request.formData()
+>(data: RemoteFormInput, ...items: K[]): Promise<{ [key in K]: T | null }> => {
   const result: { [key: string]: T | null } = {}
 
   for (const i of items.values()) {
-    result[i] = data.get(i) as T
+    result[i] = data[i] as T
   }
 
   return result as { [key in K]: T | null }
