@@ -38,7 +38,6 @@
   })
 </script>
 
-<svelte:boundary>
 <nav style="border: solid; border-width: 0 0 2px; padding-bottom: 5px;">
   <a href="/">Home</a>
   {#if session.current}
@@ -63,9 +62,5 @@
     <a href='/auth'>Login</a>
   {/if}
 </nav>
-{#snippet pending()}
-  <p>Loading...</p>
-{/snippet}
-</svelte:boundary>
 
 {@render children?.()}

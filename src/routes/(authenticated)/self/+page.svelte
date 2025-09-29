@@ -23,7 +23,6 @@
   })
 </script>
 
-<svelte:boundary>
 {#if session.current}
   <h2>Welcome to /self!</h2>
   <h3>User Information:</h3>
@@ -94,8 +93,3 @@
   </form>
   <p style="color: red;">{verifyOtp.result?.message}</p>
 {/if}
-
-{#snippet pending()}
-  <p>Loading...</p>
-{/snippet}
-</svelte:boundary>
