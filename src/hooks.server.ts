@@ -3,7 +3,7 @@ import { getValidatedSession } from "$lib/supabase/shared.js"
 import { redirect } from "@sveltejs/kit"
 
 export const handle = async ({ event, resolve }) => {
-  /* Only check auth for non-remote-function calls, otherwise we get update issues. */
+  /* Only check auth for non-remote-function calls. */
   // should we even continue doing auth checks here?
   if (!event.isRemoteRequest) {
     // call directly, so we can refresh the session and update the auth cookie if needed
