@@ -1,6 +1,7 @@
 import { form } from "$app/server"
 import { getFormData } from "$lib/server/event.js"
 import { createAdminClient, createServerClient } from "$lib/supabase/server.js"
+import { getSession } from "$lib/supabase/supabase.remote.js"
 import type { Provider } from "@supabase/supabase-js"
 import { redirect } from "@sveltejs/kit"
 
@@ -57,6 +58,9 @@ export const updateNickname = form('unchecked', async (data) => {
   /* Refresh tokens, so we can display the new nickname. */
   await supabase.auth.refreshSession()
 
+  /* Refresh data on the page. */
+  await getSession().refresh()
+
   return { message: 'Nickname updated!' }
 })
 
@@ -74,6 +78,9 @@ export const deleteNickname = form("unchecked", async () => {
 
   /* Refresh tokens, so we can see the nickname is undefined. */
   await supabase.auth.refreshSession()
+  
+  /* Refresh data on the page. */
+  await getSession().refresh()
 
   return { message: 'Nickname deleted!' }
 })
