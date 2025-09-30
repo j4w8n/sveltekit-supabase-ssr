@@ -1,7 +1,7 @@
 import { redirect } from "@sveltejs/kit"
 import { form, getRequestEvent } from "$app/server"
 import { type Provider } from "@supabase/supabase-js"
-import { getFormData } from "$lib/server/event.js"
+import { getFormData } from "$lib/server/utils.js"
 import { createServerClient } from "$lib/supabase/server.js"
 
 export const signup = form('unchecked', async (data) => {

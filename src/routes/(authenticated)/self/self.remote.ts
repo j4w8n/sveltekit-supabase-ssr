@@ -1,9 +1,14 @@
 import { form } from "$app/server"
-import { getFormData } from "$lib/server/event.js"
+import { getFormData } from "$lib/server/utils.js"
 import { createAdminClient, createServerClient } from "$lib/supabase/server.js"
 import { getSession } from "$lib/supabase/supabase.remote.js"
 import type { Provider } from "@supabase/supabase-js"
 import { redirect } from "@sveltejs/kit"
+
+// None of these remote functions require an auth check
+// because the supabase client functions should only
+// take effect on the logged in user.
+// The one exception is the deleteUser function.
 
 export const convertEmail = form('unchecked', async (data) => {
   const { email } = await getFormData(data, 'email')
@@ -85,6 +90,12 @@ export const deleteNickname = form("unchecked", async () => {
   return { message: 'Nickname deleted!' }
 })
 
+/**
+ * This is an unsafe remote function; for demo use only.
+ * Do not use this in production unless you've 
+ * authenticated the request appropriately.
+ * Otherwise anyone could delete a user if they know the user's id.
+ */
 export const deleteUser = form("unchecked", async (data) => {
   const { user } = await getFormData(data, 'user')
 
