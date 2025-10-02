@@ -3,8 +3,10 @@ import { form, getRequestEvent } from "$app/server"
 import { type Provider } from "@supabase/supabase-js"
 import { getFormData } from "$lib/server/utils.js"
 import { createServerClient } from "$lib/supabase/server.js"
+import * as v from "valibot"
+import * as s from "./auth.schemas.js"
 
-export const signup = form('unchecked', async (data) => {
+export const signup = form(v.object({email: s.email, _password: s._password}), async (data) => {
   const { email, _password } = await getFormData(data, 'email', '_password')
 
   if (!email || !_password)
@@ -22,16 +24,16 @@ export const signup = form('unchecked', async (data) => {
     return { message: 'Please check email to confirm your signup.' }
 })
 
-export const signinEmail = form('unchecked', async (data) => {
-  const { email, password } = await getFormData(data, 'email', 'password')
+export const signinEmail = form(v.object({ email: s.email, _password: s._password }), async (data) => {
+  const { email, _password } = await getFormData(data, 'email', '_password')
 
-  if (!email || !password)
+  if (!email || !_password)
     return { message: 'Please enter an email and password' }
   
   const supabase = createServerClient()
   const { error } = await supabase.auth.signInWithPassword({
     email,
-    password
+    password: _password
   })
 
   if (error)
@@ -62,7 +64,8 @@ export const signinOtp = form('unchecked', async (data) => {
   }
 })
 
-export const signinOAuth = form('unchecked', async (data) => {
+// Provider validation will silently fail
+export const signinOAuth = form(v.object({ provider: s.provider }), async (data) => {
   const { url } = getRequestEvent()
   const { provider } = await getFormData<Provider>(data, 'provider')
 

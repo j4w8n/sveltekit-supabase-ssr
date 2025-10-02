@@ -16,26 +16,51 @@
     name="email" 
     placeholder="email" 
     type="email" 
-    value={signinEmail.input?.email} 
-    aria-invalid={!!signinEmail.issues?.email}
+    value={signinEmail.input?.email || signup.input?.email} 
+    aria-invalid={!!signinEmail.issues?.email || !!signup.issues?.email}
   >
   <!-- prefix password with underscore so SvelteKit does not return this value -->
   <input 
     name="_password" 
     placeholder="password" 
     type="password" 
-    aria-invalid={!!signinEmail.input?._password}
+    aria-invalid={!!signinEmail.input?._password || !!signup.input?._password}
   >
   <button style="margin-top: 12px;">Login</button>
   <button {...signup.buttonProps} style="margin-top: 12px;">Signup</button>
 </form>
-<p style:color='red'>{signinEmail.result?.message || signup.result?.message }</p>
+{#if signinEmail.issues}
+  {#each signinEmail.issues.email as issue}
+    <p style:color='red' style:width="250px">{issue.message} email</p>
+  {/each}
+  {#each signinEmail.issues._password as issue}
+    <p style:color='red' style:width="250px">{issue.message} password</p>
+  {/each}
+{:else if signinEmail.result}
+  <p style:color='red' style:width="250px">{signinEmail.result?.message} result</p>
+{/if}
+{#if signup.issues}
+  {#each signup.issues.email as issue}
+    <p style:color='red' style:width="250px">{issue.message}</p>
+  {/each}
+  {#each signup.issues._password as issue}
+    <p style:color='red' style:width="250px">{issue.message}</p>
+  {/each}
+{:else if signup.result?.message}
+  <p style:color='red' style:width="250px">{signup.result?.message}</p>
+{/if}
 
 <form {...signinOAuth}>
   <input name="provider" type="hidden" value="github">
   <button style="margin-top: 12px;">Login with GitHub</button>
 </form>
-<p style:color='red'>{signinOAuth.result?.message }</p>
+{#if signinOAuth.issues?.provider}
+  {#each signinOAuth.issues.provider as issue}
+    <p style:color='red' style:width="250px">{issue.message}</p>
+  {/each}
+{:else if signinOAuth.result?.message}
+  <p style:color='red' style:width="250px">{signinOAuth.result?.message}</p>
+{/if}
 
 <form {...signinMagicLink}>
   <input 
@@ -47,7 +72,7 @@
   >
   <button style="margin-top: 12px;">Login with magic link</button>
 </form>
-<p style:color='red'>{signinMagicLink.result?.message }</p>
+<p style:color='red' style:width="250px">{signinMagicLink.result?.message}</p>
 
 <form {...signinOtp}>
   <input 
@@ -59,12 +84,12 @@
   >
   <button style="margin-top: 12px;">Login with phone OTP</button>
 </form>
-<p style:color='red'>{signinOtp.result?.message }</p>
+<p style:color='red' style:width="250px">{signinOtp.result?.message}</p>
 
 <form {...signinAnonymously}>
   <button style="margin-top: 12px;">Login Anonymously</button>
 </form>
-<p style:color='red'>{signinAnonymously.result?.message }</p>
+<p style:color='red' style:width="250px">{signinAnonymously.result?.message}</p>
 
 <form {...resetPassword}>
   <input 
@@ -76,9 +101,9 @@
   >
   <button style="margin-top: 12px;">Reset Your Password</button>
 </form>
-<p style:color='red'>{resetPassword.result?.message }</p>
+<p style:color='red' style:width="250px">{resetPassword.result?.message}</p>
 
-{#if signinOtp.result?.verify || verifyOtp.result?.verify }
+{#if signinOtp.result?.verify || verifyOtp.result?.verify}
   <form {...verifyOtp}>
     <input 
       name="otp" 
@@ -94,5 +119,5 @@
     >
     <button style="margin-top: 12px;">Verify</button>
   </form>
-  <p style:color='red'>{verifyOtp.result?.message}</p>
+  <p style:color='red' style:width="250px">{verifyOtp.result?.message}</p>
 {/if}

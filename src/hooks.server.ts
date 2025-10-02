@@ -3,6 +3,7 @@ import { getValidatedSession } from "$lib/supabase/shared.js"
 import { redirect } from "@sveltejs/kit"
 
 export const handle = async ({ event, resolve }) => {
+  console.log(event.request.url)
   /* Only check auth for non-remote-function calls. */
   // should we even continue doing auth checks here?
   if (!event.isRemoteRequest) {
