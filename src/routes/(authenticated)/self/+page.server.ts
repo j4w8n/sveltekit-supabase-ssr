@@ -6,3 +6,4 @@
  * This file is optional, and only exists to trigger a server call 
  * for strict authentication checks during client side routing.
  */
+export const load = () => null
