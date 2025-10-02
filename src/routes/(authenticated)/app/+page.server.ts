@@ -14,5 +14,3 @@
  *  if (!session) redirect(307, '/auth')
  * }
  */
-
-export const load = () => null
