@@ -1,14 +1,11 @@
 import { redirect } from "@sveltejs/kit"
 import { form, getRequestEvent } from "$app/server"
-import { type Provider } from "@supabase/supabase-js"
-import { getFormData } from "$lib/server/utils.js"
 import { createServerClient } from "$lib/supabase/server.js"
 import * as v from "valibot"
 import * as s from "./auth.schemas.js"
+import * as f from "$lib/schema.fields.js"
 
-export const signup = form(v.object({email: s.email, _password: s._password}), async (data) => {
-  const { email, _password } = await getFormData(data, 'email', '_password')
-
+export const signupEmail = form(s.signup_email, async ({ email, _password}) => {
   if (!email || !_password)
     return { message: 'Please enter an email and password' }
 
@@ -24,11 +21,12 @@ export const signup = form(v.object({email: s.email, _password: s._password}), a
     return { message: 'Please check email to confirm your signup.' }
 })
 
-export const signinEmail = form(v.object({ email: s.email, _password: s._password }), async (data) => {
-  const { email, _password } = await getFormData(data, 'email', '_password')
-
+export const signinEmail = form(s.signin_email, async ({ email, _password}) => {
   if (!email || !_password)
     return { message: 'Please enter an email and password' }
+
+  if (_password.length < 7)
+    return { message: 'Password must be at least seven characters long' }
   
   const supabase = createServerClient()
   const { error } = await supabase.auth.signInWithPassword({
@@ -43,9 +41,7 @@ export const signinEmail = form(v.object({ email: s.email, _password: s._passwor
   redirect(303, '/app')
 })
 
-export const signinOtp = form('unchecked', async (data) => {
-  const { phone } = await getFormData(data, 'phone')
-
+export const signinOtp = form(v.object({ phone: f.phone }), async ({ phone }) => {
   if (!phone)
     return { message: 'Please enter a phone number.' }
 
@@ -64,10 +60,8 @@ export const signinOtp = form('unchecked', async (data) => {
   }
 })
 
-// Provider validation will silently fail
-export const signinOAuth = form(v.object({ provider: s.provider }), async (data) => {
+export const signinOAuth = form(v.object({ provider: f.provider }), async ({ provider }) => {
   const { url } = getRequestEvent()
-  const { provider } = await getFormData<Provider>(data, 'provider')
 
   if (!provider)
     return { message: 'No provider found.' }
@@ -91,9 +85,7 @@ export const signinOAuth = form(v.object({ provider: s.provider }), async (data)
   if (o_auth_data.url) redirect(303, o_auth_data.url)
 })
 
-export const signinMagicLink = form('unchecked', async (data) => {
-  const { email } = await getFormData(data, 'email')
-
+export const signinMagicLink = form(v.object({ email: f.email }), async ({ email }) => {
   if (!email)
     return { message: 'Please enter an email.' }
 
@@ -119,9 +111,7 @@ export const signinAnonymously = form('unchecked', async () => {
   redirect(303, '/app')
 })
 
-export const resetPassword = form('unchecked', async(data) => {
-  const { email } = await getFormData(data, 'email')
-
+export const resetPassword = form(v.object({ email: f.email }), async({ email }) => {
   if (!email)
     return { message: 'Please enter an email.' }
 
@@ -140,11 +130,9 @@ export const signout = form('unchecked', async () => {
   redirect(303, '/')
 })
 
-export const verifyOtp = form('unchecked', async (data) => {
-  const { otp, phone } = await getFormData(data, 'otp', 'phone')
-
+export const verifyOtp = form(v.object({ otp: f.otp, phone: f.phone }), async ({ otp, phone }) => {
   if (!otp) {
-    return { message: 'Please enter an OTP.', verify: true }
+    return { message: 'Please enter an OTP.', verify: true, phone }
   }
 
   if (!phone) {
@@ -160,5 +148,5 @@ export const verifyOtp = form('unchecked', async (data) => {
   })
 
   if (error)
-    return { message: error.message, verify: true }
+    return { message: error.message, verify: true, phone }
 })

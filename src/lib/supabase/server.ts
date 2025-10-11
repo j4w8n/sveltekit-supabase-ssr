@@ -45,7 +45,7 @@ export const createAdminClient = (options?: SupabaseClientOptions<"public">) => 
 }
 
 /**
- * Supabase server client for SvelteKit 
+ * Create a Supabase server client for SvelteKit 
  * query and prerender remote functions.
  * 
  * This client cannot set headers, which includes cookies, per SvelteKit.

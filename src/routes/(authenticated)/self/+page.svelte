@@ -2,62 +2,68 @@
   import { 
     convertEmail,
     convertProvider,
-    deleteUser,
     deleteNickname,
     updateNickname,
     updatePassword,
     updatePhone,
     verifyOtp
-  } from "./self.remote"
-  import { getSession } from '$lib/supabase/supabase.remote.js'
+  } from "./self.remote.js"
+  import { getSession } from "$lib/supabase/supabase.remote.js"
+  import * as v from "valibot"
 
-  let session = $derived(getSession())
+  let session = $derived(await getSession())
   
   let has_email_provider = $state(false)
 
   $effect(() => {
-    const providers = session?.current?.user.app_metadata.providers
+    const providers = session?.user.app_metadata.providers
     has_email_provider = providers 
       ? providers.some((p: string) => p === 'email') 
-      : session?.current?.user.app_metadata.provider === 'email'
+      : session?.user.app_metadata.provider === 'email'
   })
 </script>
 
-{#if session.current}
+{#if session}
   <h2>Welcome to /self!</h2>
   <h3>User Information:</h3>
-  <p style="margin-left: 10px;">ID: {session.current.user.id}</p>
-  <p style="margin-left: 10px;">Email: {session.current.user.email || "not set"}</p>
-  <p style="margin-left: 10px;">Phone Number: {session.current.user.phone || "not set"}</p>
-  <p style="margin-left: 10px;">Nickname: {session.current.user.user_metadata.nickname || "not set"}</p>
-  <form {...deleteUser}>
-    Delete a user by ID:
-    <input name="user" type="text">
-    <button style="margin-top: 12px;">Delete</button>
-  </form>
-  <p style="color: red;">{deleteUser.result?.message}</p>
-  <form {...updateNickname}>
+  <p style="margin-left: 10px;">ID: {session.user.id}</p>
+  <p style="margin-left: 10px;">Email: {session.user.email || "not set"}</p>
+  <p style="margin-left: 10px;">Phone Number: {session.user.phone || "not set"}</p>
+  <p style="margin-left: 10px;">Nickname: {session.user.user_metadata.nickname || "not set"}</p>
+  <form {...updateNickname.preflight(v.object({ nickname: v.string() }))}>
     Change your nickname:
-    <input name="nickname" type="text">
+    <input {...updateNickname.fields.nickname.as("text")}>
+    {#each updateNickname.fields.nickname.issues() as issue}
+      <p style:color='red' style:width="250px">nickname: {issue.message}</p>
+    {/each}
     <button style="margin-top: 12px;">Update</button>
     <button {...deleteNickname.buttonProps} style="margin-top: 12px;">Delete</button>
   </form>
   <p style="color: red;">{updateNickname.result?.message || deleteNickname.result?.message}</p>
+
   <form {...updatePhone}>
     Change your phone number:
-    <input name="phone" type="text">
+    <input {...updatePhone.fields.phone.as("text")}>
+    {#each updatePhone.fields.phone.issues() as issue}
+      <p style:color='red' style:width="250px">phone: {issue.message}</p>
+    {/each}
     <button style="margin-top: 12px;">Update</button>
   </form>
   <p style="color: red;">{updatePhone.result?.message}</p>
+
   {#if has_email_provider}
     <form {...updatePassword}>
       Change your password:
-      <input name="password" type="password">
+      <input {...updatePassword.fields._password.as("password")}>
+      {#each updatePassword.fields._password.issues() as issue}
+        <p style:color='red' style:width="250px">password: {issue.message}</p>
+      {/each}
       <button style="margin-top: 12px;">Change</button>
     </form>
     <p style="color: red;">{updatePassword.result?.message}</p>
   {/if}
-  {#if session.current.user.is_anonymous}
+
+  {#if session.user.is_anonymous}
     <form {...convertProvider}>
       Convert to a permanent user:
       <button style="margin-top: 12px;" name="provider" value="github">Use GitHub auth</button>
@@ -65,7 +71,10 @@
     <p style="color: red;">{convertProvider.result?.message}</p>
     <form {...convertEmail}>
       Convert to a permanent user:
-      <input name="email" type="email" placeholder="email">
+      <input {...convertEmail.fields.email.as("email")} placeholder="email">
+      {#each convertEmail.fields.email.issues() as issue}
+        <p style:color='red' style:width="250px">email: {issue.message}</p>
+      {/each}
       <button style="margin-top: 12px;">Use email auth</button>
     </form>
     <p style="color: red;">{convertEmail.result?.message}</p>
@@ -73,22 +82,39 @@
 {/if}
 
 {#if updatePhone.result?.verify}
-  {@const phone = updatePhone.input?.phone}
   <form {...verifyOtp} style="display: flex; flex-direction: column; width: 25%">
-    <input name="otp" width="200" placeholder={`OTP sent to ${phone}`} type="text">
-    {#if phone}<input name="phone" type="hidden" value={phone}>{/if}
+    <input 
+      {...verifyOtp.fields.otp.as("text")}
+      placeholder="Enter the OTP"
+      width="200"
+    >
+    {#each verifyOtp.fields.otp.issues() as issue}
+      <p style:color='red' style:width="250px">otp: {issue.message}</p>
+    {/each}
+    <input name="phone" type="hidden" value={updatePhone.result?.phone}>
     <button style="margin-top: 12px;">Verify</button>
   </form>
   <p style="color: red;">{verifyOtp.result?.message}</p>
 {/if}
-{#if convertEmail.result?.password_prompt}
-  {@const email = convertEmail.input?.email}
+
+{#if convertEmail.result?.verify}
   <form {...verifyOtp} style="display: flex; flex-direction: column; width: 25%">
-    <input name="otp" width="200" placeholder={`OTP sent to ${email}`} type="text">
-    {#if convertEmail.result?.password_prompt}
-    <input name="password" placeholder="Enter new password" type="password">
-    {/if}
-    {#if email}<input name="email" type="hidden" value={email}>{/if}
+    <input 
+      {...verifyOtp.fields.otp.as("text")}
+      placeholder="Enter the OTP"
+      width="200"
+    >
+    {#each verifyOtp.fields.otp.issues() as issue}
+      <p style:color='red' style:width="250px">otp: {issue.message}</p>
+    {/each}
+    <input 
+      {...verifyOtp.fields._password.as("password")}
+      placeholder="Enter new password"
+    >
+    {#each verifyOtp.fields._password.issues() as issue}
+      <p style:color='red' style:width="250px">password: {issue.message}</p>
+    {/each}
+    <input {...convertEmail.fields.email.as("hidden", convertEmail.result?.email)}>
     <button style="margin-top: 12px;">Verify</button>
   </form>
   <p style="color: red;">{verifyOtp.result?.message}</p>

@@ -6,82 +6,86 @@
     signinMagicLink,
     signinOAuth,
     signinOtp,
-    signup,
+    signupEmail,
     verifyOtp
   } from "./auth.remote.js"
+  import * as s from "./auth.schemas.js";
+  import * as f from "$lib/schema.fields.js"
+  import * as v from "valibot"
 </script>
 
-<form {...signinEmail}>
+<form {...signinEmail.preflight(s.signin_email)}>
+  <!-- 
+    this syntax takes care of the "name", "type", 
+   "value" (in case of failed submission), and "aria-invalid" fields 
+  -->
   <input 
-    name="email" 
-    placeholder="email" 
-    type="email" 
-    value={signinEmail.input?.email || signup.input?.email} 
-    aria-invalid={!!signinEmail.issues?.email || !!signup.issues?.email}
+    {...signinEmail.fields.email.as("email")}
+    placeholder="email"
   >
+  {#each signinEmail.fields.email.issues() as issue}
+    <p style:color='red' style:width="250px">email: {issue.message}</p>
+  {/each}
+
   <!-- prefix password with underscore so SvelteKit does not return this value -->
   <input 
-    name="_password" 
-    placeholder="password" 
-    type="password" 
-    aria-invalid={!!signinEmail.input?._password || !!signup.input?._password}
+    {...signinEmail.fields._password.as("password")}
+    placeholder="password"
   >
+  {#each signinEmail.fields._password.issues() as issue}
+    <p style:color='red' style:width="250px">password: {issue.message}</p>
+  {/each}
   <button style="margin-top: 12px;">Login</button>
-  <button {...signup.buttonProps} style="margin-top: 12px;">Signup</button>
 </form>
-{#if signinEmail.issues}
-  {#each signinEmail.issues.email as issue}
-    <p style:color='red' style:width="250px">{issue.message} email</p>
+<p style:color='red' style:width="250px">{signinEmail.result?.message}</p>
+
+<form {...signupEmail.preflight(s.signup_email)}>
+  <input 
+    {...signupEmail.fields.email.as("email")}
+    placeholder="email"
+  >
+  {#each signupEmail.fields.email.issues() as issue}
+    <p style:color='red' style:width="250px">email: {issue.message}</p>
   {/each}
-  {#each signinEmail.issues._password as issue}
-    <p style:color='red' style:width="250px">{issue.message} password</p>
+
+  <!-- prefix password with underscore so SvelteKit does not return this value -->
+  <input 
+    {...signupEmail.fields._password.as("password")}
+    placeholder="password"
+  >
+  {#each signupEmail.fields._password.issues() as issue}
+    <p style:color='red' style:width="250px">password: {issue.message}</p>
   {/each}
-{:else if signinEmail.result}
-  <p style:color='red' style:width="250px">{signinEmail.result?.message} result</p>
-{/if}
-{#if signup.issues}
-  {#each signup.issues.email as issue}
-    <p style:color='red' style:width="250px">{issue.message}</p>
-  {/each}
-  {#each signup.issues._password as issue}
-    <p style:color='red' style:width="250px">{issue.message}</p>
-  {/each}
-{:else if signup.result?.message}
-  <p style:color='red' style:width="250px">{signup.result?.message}</p>
-{/if}
+  <button style="margin-top: 12px;">Signup</button>
+</form>
+<p style:color='red' style:width="250px">{signupEmail.result?.message}</p>
 
 <form {...signinOAuth}>
-  <input name="provider" type="hidden" value="github">
+  <input {...signinOAuth.fields.provider.as("hidden", "github")}>
   <button style="margin-top: 12px;">Login with GitHub</button>
 </form>
-{#if signinOAuth.issues?.provider}
-  {#each signinOAuth.issues.provider as issue}
-    <p style:color='red' style:width="250px">{issue.message}</p>
-  {/each}
-{:else if signinOAuth.result?.message}
-  <p style:color='red' style:width="250px">{signinOAuth.result?.message}</p>
-{/if}
+<p style:color='red' style:width="250px">{signinOAuth.result?.message}</p>
 
-<form {...signinMagicLink}>
+<form {...signinMagicLink.preflight(v.object({ email: f.email }))}>
   <input 
-    name="email" 
-    placeholder="email" 
-    type="email" 
-    value={signinMagicLink.input?.email} 
-    aria-invalid={!!signinMagicLink.issues?.email}
+    {...signinMagicLink.fields.email.as("email")}
+    placeholder="email"
   >
+  {#each signinMagicLink.fields.email.issues() as issue}
+    <p style:color='red' style:width="250px">email: {issue.message}</p>
+  {/each}
   <button style="margin-top: 12px;">Login with magic link</button>
 </form>
 <p style:color='red' style:width="250px">{signinMagicLink.result?.message}</p>
 
-<form {...signinOtp}>
+<form {...signinOtp.preflight(v.object({ phone: v.string() }))}>
   <input 
-    name="phone" 
-    placeholder="phone number" 
-    type="text" 
-    value={signinOtp.input?.phone} 
-    aria-invalid={!!signinOtp.issues?.phone}
+    {...signinOtp.fields.phone.as("text")}
+    placeholder="phone number"
   >
+  {#each signinOtp.fields.phone.issues() as issue}
+    <p style:color='red' style:width="250px">phone: {issue.message}</p>
+  {/each}
   <button style="margin-top: 12px;">Login with phone OTP</button>
 </form>
 <p style:color='red' style:width="250px">{signinOtp.result?.message}</p>
@@ -91,31 +95,28 @@
 </form>
 <p style:color='red' style:width="250px">{signinAnonymously.result?.message}</p>
 
-<form {...resetPassword}>
+<form {...resetPassword.preflight(v.object({ email: f.email }))}>
   <input 
-    name="email" 
-    placeholder="email" 
-    type="email" 
-    value={resetPassword.input?.email} 
-    aria-invalid={!!resetPassword.issues?.email}
+    {...resetPassword.fields.email.as("email")}
+    placeholder="email"
   >
+  {#each resetPassword.fields.email.issues() as issue}
+    <p style:color='red' style:width="250px">email: {issue.message}</p>
+  {/each}
   <button style="margin-top: 12px;">Reset Your Password</button>
 </form>
 <p style:color='red' style:width="250px">{resetPassword.result?.message}</p>
 
-{#if signinOtp.result?.verify || verifyOtp.result?.verify}
-  <form {...verifyOtp}>
+{#if verifyOtp.result?.verify || signinOtp.result?.verify}
+  <form {...verifyOtp.preflight(v.object({ otp: f.otp, phone: f.phone }))}>
     <input 
-      name="otp" 
-      placeholder={`OTP sent to ${signinOtp.result?.phone}`} 
-      type="text" 
-      value={verifyOtp.input?.otp} 
-      aria-invalid={!!verifyOtp.issues?.otp}
+      {...verifyOtp.fields.otp.as("text")}
     >
+    {#each verifyOtp.fields.otp.issues() as issue}
+    <p style:color='red' style:width="250px">password: {issue.message}</p>
+  {/each}
     <input 
-      name="phone" 
-      type="hidden" 
-      value={signinOtp.result?.phone} 
+      {...verifyOtp.fields.phone.as("hidden", verifyOtp.result?.phone || signinOtp.result?.phone || "")}
     >
     <button style="margin-top: 12px;">Verify</button>
   </form>

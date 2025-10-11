@@ -11,3 +11,10 @@ export const getRFName = (): string | null => {
 
   return request.url.split("/").filter(Boolean).at(-1) ?? null
 }
+
+/**
+ * Does user's role match required role?
+ */
+export const isRoleAuthorized = (required_role: string, user_role: string): boolean => {
+  return user_role === required_role
+}

@@ -1,18 +1,16 @@
 import { form } from "$app/server"
-import { getFormData } from "$lib/server/utils.js"
-import { createAdminClient, createServerClient } from "$lib/supabase/server.js"
+import { createServerClient } from "$lib/supabase/server.js"
 import { getSession } from "$lib/supabase/supabase.remote.js"
-import type { Provider } from "@supabase/supabase-js"
 import { redirect } from "@sveltejs/kit"
+import * as v from "valibot"
+import * as f from "$lib/schema.fields.js"
 
 // None of these remote functions require an auth check
 // because the supabase client functions should only
-// take effect on the logged in user.
-// The one exception is the deleteUser function.
+// take effect on the logged in user - which is driven
+// by the cookie the server receives.
 
-export const convertEmail = form('unchecked', async (data) => {
-  const { email } = await getFormData(data, 'email')
-
+export const convertEmail = form(v.object({ email: f.email }), async ({ email }) => {
   if (!email) 
     return { message: 'Please provide your email address.' }
 
@@ -25,13 +23,12 @@ export const convertEmail = form('unchecked', async (data) => {
 
   return { 
     message: 'Please check your email for the OTP code and enter it below, along with your new password.', 
-    password_prompt: true,
+    email,
+    verify: true,
   }
 })
 
-export const convertProvider = form('unchecked', async (data) => {
-  const { provider } = await getFormData<Provider>(data, 'provider')
-
+export const convertProvider = form(v.object({ provider: f.provider }), async ({ provider }) => {
   if (!provider) 
     return { message: 'Please pass a provider.' }
 
@@ -45,9 +42,7 @@ export const convertProvider = form('unchecked', async (data) => {
   if (res_data.url) redirect(303, res_data.url)
 })
 
-export const updateNickname = form('unchecked', async (data) => {
-  const { nickname } = await getFormData(data, 'nickname')
-
+export const updateNickname = form(v.object({ nickname: v.string() }), async ({ nickname }) => {
   if (!nickname)
     return { message: 'Please enter a nickname.' }
 
@@ -69,8 +64,6 @@ export const updateNickname = form('unchecked', async (data) => {
   return { message: 'Nickname updated!' }
 })
 
-// Without setting "unchecked" here, the return type is a Promise, 
-// which throws a type error for "deleteNickname.result?.message" in +page.svelte
 export const deleteNickname = form("unchecked", async () => {
   const supabase = createServerClient()
 
@@ -90,38 +83,14 @@ export const deleteNickname = form("unchecked", async () => {
   return { message: 'Nickname deleted!' }
 })
 
-/**
- * This is an unsafe remote function; for demo use only.
- * Do not use this in production unless you've 
- * authenticated the request appropriately.
- * Otherwise anyone could delete a user if they know the user's id.
- */
-export const deleteUser = form("unchecked", async (data) => {
-  const { user } = await getFormData(data, 'user')
-
-  if (!user) 
-    return { message: 'Please enter a user id.' }
-
-  const supabase = createAdminClient()
-
-  const { error: user_error } = await supabase.auth.admin.deleteUser(user)
-  
-  if (user_error)
-    return { message: user_error.message }
-
-  return { message: 'User deleted.' }
-})
-
-export const updatePassword = form('unchecked', async (data) => {
-  const { password } = await getFormData(data, 'password')
-
-  if (!password) 
+export const updatePassword = form(v.object({ _password: f._password}), async ({ _password }) => {
+  if (!_password) 
     return { message: 'Please enter a new password' }
 
   const supabase = createServerClient()
 
   const { error: user_error } = await supabase.auth.updateUser({
-    password
+    password: _password
   })
 
   if (user_error)
@@ -130,9 +99,7 @@ export const updatePassword = form('unchecked', async (data) => {
   return { message: 'Password updated!' }
 })
 
-export const updatePhone = form('unchecked', async (data) => {
-  const { phone } = await getFormData(data, 'phone')
-
+export const updatePhone = form(v.object({ phone: f.phone }), async ({ phone }) => {
   if (!phone) 
     return { message: 'Please enter a phone number.' }
 
@@ -148,16 +115,23 @@ export const updatePhone = form('unchecked', async (data) => {
 
   return { 
     message: 'Please check your phone for the OTP code and enter it below.',
+    phone,
     verify: true
   }
 })
 
-export const verifyOtp = form('unchecked', async (data) => {
+export const verifyOtp = form(v.object({ 
+  otp: f.otp, 
+  phone: v.optional(f.phone), 
+  email: v.optional(f.email), 
+  _password: v.optional(f._password) 
+}), async ({
+  otp, phone, email, _password
+}) => {
   /**
    * This function is used to update a phone number or 
    * update an email address when converting an anonymous user.
    */
-  const { otp, phone, email, password } = await getFormData(data, 'otp', 'phone', 'email', 'password')
 
   if (!otp) 
     return { message: 'Please enter an OTP.' }
@@ -174,7 +148,7 @@ export const verifyOtp = form('unchecked', async (data) => {
     if (otp_error)
       return { message: otp_error.message }
 
-  } else if (email && password) {
+  } else if (email && _password) {
     const { error: otp_error } = await supabase.auth.verifyOtp({
       email,
       type: 'email_change',
@@ -185,7 +159,7 @@ export const verifyOtp = form('unchecked', async (data) => {
       return { message: otp_error.message }
 
     const { error: update_error } = await supabase.auth.updateUser({
-      password
+      password: _password
     })
 
     if (update_error)

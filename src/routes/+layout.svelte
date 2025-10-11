@@ -6,7 +6,7 @@
   import { getSession } from "$lib/supabase/supabase.remote.js"
 
   let { children } = $props()
-  let session = $derived(getSession())
+  let session = $derived(await getSession())
 
   // We mostly use this browser client and onAuthStateChange
   // to refresh tokens and update the session for demo app purposes.
@@ -17,7 +17,7 @@
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, _session) => {
-      if (_session?.expires_at !== session.current?.expires_at) {
+      if (_session?.expires_at !== session?.expires_at) {
         // Keep session updated for demo purposes in the nav bar.
         getSession().set(_session)
 
@@ -40,18 +40,19 @@
 
 <nav style="border: solid; border-width: 0 0 2px; padding-bottom: 5px;">
   <a href="/">Home</a>
-  {#if session.current}
+  {#if session}
     <a href="/app">App</a>
     <a href="/self">Self</a>
+    <a href="/admin">Admin</a>
     <img 
       style="width: 32px; height: 32px; border-radius: 9999px;" 
-      src={session.current.user.user_metadata.avatar_url ?? 'https://api.dicebear.com/8.x/fun-emoji/svg'} 
+      src={session.user.user_metadata.avatar_url ?? 'https://api.dicebear.com/8.x/fun-emoji/svg'} 
       alt="person_avatar"
     >
     <p>
       Session expires at: {
-        session.current.expires_at 
-        ? new Date(session.current.expires_at * 1000).toLocaleString() 
+        session.expires_at 
+        ? new Date(session.expires_at * 1000).toLocaleString() 
         : 'unknown'
       }
     </p>
