@@ -1,5 +1,6 @@
 <script>
   import { deleteUser } from "./admin.remote.js"
+  import * as v from "valibot"
 </script>
 
 <h2>Welcome to /admin!</h2>
@@ -7,7 +8,7 @@
   This is so you can see the results of remote function checks when trying to delete a user. 
   In a production environment, you'd only want admins to be able to access this page.
 </p>
-<form {...deleteUser}>
+<form {...deleteUser.preflight(v.object({ user: v.string() }))}>
   Delete a user by ID:
   <input {...deleteUser.fields.user.as("text")}>
   {#each deleteUser.fields.user.issues() as issue}
