@@ -37,7 +37,7 @@
       <p style:color='red' style:width="250px">nickname: {issue.message}</p>
     {/each}
     <button style="margin-top: 12px;">Update</button>
-    <button {...deleteNickname.buttonProps} style="margin-top: 12px;">Delete</button>
+    <button {...deleteNickname.fields.action.as("submit", "_")} style="margin-top: 12px;">Delete</button>
   </form>
   <p style="color: red;">{updateNickname.result?.message || deleteNickname.result?.message}</p>
 
