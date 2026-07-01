@@ -1,4 +1,5 @@
 <script lang="ts">
+  import '../app.css'
   import { goto, invalidate } from '$app/navigation'
   import { onMount } from 'svelte'
 
@@ -46,29 +47,37 @@
   })
 </script>
 
-<nav style="border: solid; border-width: 0 0 2px; padding-bottom: 5px;">
-  <a href="/">Home</a>
+<nav
+  class="flex flex-wrap items-center gap-4 border-b border-slate-200 bg-white px-6 py-3 shadow-sm"
+>
+  <a href="/" class="font-semibold text-slate-900 hover:text-indigo-600">Home</a>
   {#if session}
-    <a href="/app">App</a>
-    <a href="/self">Self</a>
-    <img 
-      style="width: 32px; height: 32px; border-radius: 9999px;" 
-      src={session.user.user_metadata.avatar_url ?? 'https://api.dicebear.com/8.x/fun-emoji/svg'} 
-      alt="person_avatar"
-    >
-    <p>
-      Session expires at: {
-        session?.expires_at 
-        ? new Date(session.expires_at * 1000).toLocaleString() 
-        : 'unknown'
-      }
-    </p>
-    <form method="POST" action="auth?/signout">
-      <button>Logout</button>
-    </form>
+    <a href="/app" class="text-slate-600 hover:text-indigo-600">App</a>
+    <a href="/self" class="text-slate-600 hover:text-indigo-600">Self</a>
+    <div class="ml-auto flex items-center gap-3">
+      <img
+        class="h-8 w-8 rounded-full ring-2 ring-slate-100"
+        src={session.user.user_metadata.avatar_url ?? 'https://api.dicebear.com/8.x/fun-emoji/svg'}
+        alt="person_avatar"
+      />
+      <p class="hidden text-xs text-slate-500 sm:block">
+        Session expires: {session?.expires_at
+          ? new Date(session.expires_at * 1000).toLocaleString()
+          : 'unknown'}
+      </p>
+      <form method="POST" action="auth?/signout">
+        <button
+          class="rounded-md bg-slate-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-700"
+        >
+          Logout
+        </button>
+      </form>
+    </div>
   {:else}
-    <a href='/auth'>Login</a>
+    <a href="/auth" class="ml-auto text-slate-600 hover:text-indigo-600">Login</a>
   {/if}
 </nav>
 
-{@render children?.()}
+<main class="min-h-screen bg-slate-50 px-6 py-8">
+  {@render children?.()}
+</main>
